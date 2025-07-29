@@ -43,7 +43,7 @@
  * ・servo(angle)
  * 　サーボモーター制御関数。
  * 　引数には何度の位置まで移動させるかを入れる。
- *
+ * 
  * ・seg(mask)
  *   7セグ制御関数。
  *   以下は引数の例：
@@ -51,7 +51,7 @@
  *   アルファベット：SEG_A
  *   特定のセグ：(L1 + R2 + C3)
  *   小数点は POINT を使用する。
- *
+ * 
  * ・matrix(pattern, duration)
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
@@ -73,7 +73,7 @@
  * 
  * ・isToggleEnabled()
  *   トグルスイッチが上向きの状態なら true を返す。
- *
+ * 
  * ・isTogglePulled()
  *   トグルスイッチが上向きになった一瞬のみ true を返す。
  * 
@@ -85,7 +85,7 @@
  * ・isTactPressed(side)
  *   タクトスイッチが押された一瞬のみ true を返す。
  *   引数は Enabled 版と同じ。
- *   
+ * 
  */
 
 #ifndef MONO2025_H
@@ -105,7 +105,7 @@ const byte STEPPER_MOTOR_4_PIN = 35;
 // DCモーター
 const byte DC_MOTOR_1_PIN = 30;
 const byte DC_MOTOR_2_PIN = 31;
-// LED (RGB)
+// 10色LEDバー
 const byte LED_RED_PIN = 7;
 const byte LED_GREEN_PIN = 8;
 const byte LED_BLUE_PIN = 9;
@@ -121,9 +121,10 @@ const byte LED_BAR_9_PIN = 5;
 const byte LED_BAR_10_PIN = 6;
 // ブザー
 const byte BUZZER_PIN = 27;
+// モード切替
+const byte MODE_PIN = 29;
 // 7セグ
 const byte SEG_MODE_PIN = 28;
-const byte MODE_PIN = 29;
 const byte SEG_L1_PIN = 32;
 const byte SEG_L2_PIN = 33;
 const byte SEG_C1_PIN = 37;
@@ -268,10 +269,7 @@ void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
 }
 
 // DCモーターの動作モードを定義する列挙型
-enum DCMotor { LT,
-               RT,
-               S,
-               F };
+enum DCMotor { LT, RT, S, F };
 
 // DCモーター制御
 inline void dc(DCMotor action) {
@@ -293,9 +291,7 @@ const uint16_t BEEP_MID_FREQ = 800;    // 中音の周波数
 const uint16_t BEEP_HIGH_FREQ = 1200;  // 高音の周波数
 
 // ブザーの音の種類を定義する列挙型
-enum BuzzerTone { LO,
-                  MI,
-                  HI };
+enum BuzzerTone { LO, MI, HI };
 
 // 型と値を同期
 const uint16_t BUZZ_FREQ[] = {
@@ -461,7 +457,7 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
       // 残像防止のため、一旦非表示
       matrix_reset();
       // ラッチピンを下げて、データ送信を開始
-      ren(RCLK_PIN, LOW);      
+      ren(RCLK_PIN, LOW);
       // 列
       shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[row]);
       // 行

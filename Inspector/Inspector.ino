@@ -2,13 +2,13 @@
 
 void start() {
   matrix_reset();
-  servo(SERVO_MAX);
+  servo(SERVO_MIN);
 }
 
 void loop() {
   static byte bar_gage = 0;
   static byte bar_color = 0;
-  static byte pos = SERVO_MAX;
+  static byte pos = SERVO_MIN;
   if (!isToggleEnabled()) {
     dc(S);
     syncPot();
@@ -31,7 +31,6 @@ void loop() {
     buzz(HI, 0.2);
   }
   bar(lineIndex[bar_gage - 1], ledIndex[bar_color - 1]);
-  Serial.println(bar_gage);
   syncArrow();
   if (isTactPressed(TL) && pos < SERVO_MAX) pos++;
   if (isTactPressed(TR) && pos > SERVO_MIN) pos--;
