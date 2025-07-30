@@ -473,7 +473,7 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
  ************/
 
 // 各線の列挙型
-enum Line { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
+enum Line : uint16_t { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
 // 各色の格納変数
 const byte lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 // 各色の列挙型
