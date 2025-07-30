@@ -323,8 +323,8 @@ void buzz(BuzzerTone tone_type, float duration = 0.0f) {
  *****************/
 
 Servo srv;
-const byte SERVO_MIN = 6;
-const byte SERVO_MAX = 161;
+const byte SERVO_MIN = 8;
+const byte SERVO_MAX = 160;
 boolean servo_started = false;
 void servo(uint16_t angle) {
   // 初回実行時にセットアップ
