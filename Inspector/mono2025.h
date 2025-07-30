@@ -449,7 +449,7 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
     pinMode(RCLK_PIN, OUTPUT);
     matrix_started = true;
   }
-  static unsigned long startTime = millis();
+  unsigned long startTime = millis();
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
     // 1フレーム（8行分）を描画
