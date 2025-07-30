@@ -26,14 +26,12 @@
  *   3°ずつ動く。
  *   引数なしでは時計回りに動く。
  *   引数の reverse を true にすると、反時計回りに動く。
- *   DC モーターとの両立はできない。
- * 
+ *   
  * ・dc(action)
  *   DCモーターを制御する。
  *   引数には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
  *   引数の文字にダブルクォーテーションは不要。
- *   ステッピングモーターとの両立はできない。
- * 
+ *   
  * ・buzz(tone_type, duration)
  *   ブザー鳴動関数。
  *   tone_type は周波数で、HI(高音)、MI(中音)、LO(低音)がある。
@@ -42,20 +40,20 @@
  * 
  * ・servo(angle)
  * 　サーボモーター制御関数。
- * 　引数には何度の位置まで移動させるかを入れる。
+ * 　引数には何度の位置まで移動させるかを入れる。(8〜160)
  * 
  * ・seg(mask)
  *   7セグ制御関数。
  *   以下は引数の例：
- *   番号：num[8]
- *   アルファベット：SEG_A
- *   特定のセグ：(L1 + R2 + C3)
- *   小数点は POINT を使用する。
+ *   番号：num[8] (0〜9)
+ *   アルファベット：SEG_A (ABCDEFのみ)
+ *   特定のセグ：(L1 + R2 + C3) (L1,L2,C1,C2,C3,R1,R2,POINT)
+ *   セグ右下の小数点は POINT を使用する。
  * 
  * ・matrix(pattern, duration)
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
- *   MATRIX_[UP, DOWN, LEFT, RIGHT], MATRIX_[LEFT, UP]_[1-8]
+ * 　MATRIX_[UP, DOWN, LEFT, RIGHT], MATRIX_[LEFT, UP]_[1-8]
  * 　または、int[8] で自作のデザインを作る。
  * 　duration は表示する長さ。規定は 100ms。
  * 
@@ -86,12 +84,17 @@
  *   タクトスイッチが押された一瞬のみ true を返す。
  *   引数は Enabled 版と同じ。
  * 
+ * ・syncPot()
+ * 　7セグと半固定抵抗の値を同期する。
+ * 
+ * ・syncArrow()
+ * 　LEDマトリックスとジョイスティックの値を同期する。
  */
 
 #ifndef MONO2025_H
 #define MONO2025_H
 
-#include <Servo.h>
+#include <Servo.h> // lib/Servo
 
 /***********
  * 制御ピン *
@@ -199,8 +202,6 @@ void stepper(boolean reverse = false) {
     pinMode(MODE_PIN, OUTPUT);
     stepper_started = true;
   }
-  // 書き換え前準備
-  ren(MODE_PIN, HIGH);
   // 回数フラグ
   static byte stepper_flag = 0;
   stepper_flag++;
@@ -322,16 +323,23 @@ void buzz(BuzzerTone tone_type, float duration = 0.0f) {
  * サーボモーター *
  *****************/
 
+// Servo のライブラリで制御
 Servo srv;
+// 可動域最小値
 const byte SERVO_MIN = 8;
+// 可動域最大値
 const byte SERVO_MAX = 160;
+
 boolean servo_started = false;
+
+// サーボモーター制御関数
 void servo(uint16_t angle) {
   // 初回実行時にセットアップ
   if (!servo_started) {
     srv.attach(SERVO_PIN);
     servo_started = true;
   }
+  // 適用
   srv.write(angle);
 }
 
@@ -430,18 +438,10 @@ const byte MATRIX_RIGHT[8] = { B00011000, B00111100, B01111110, B11111111, B0001
 const byte MATRIX_UP[8] = { B00001000, B00001100, B00001110, B11111111, B11111111, B00001110, B00001100, B00001000 };
 const byte MATRIX_DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
 
-// 消灯用
-inline void matrix_reset() {
-  ren(RCLK_PIN, LOW);
-  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 列
-  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 行
-  ren(RCLK_PIN, HIGH);
-}
-
 boolean matrix_started = false;
 
-// 点灯
-void matrix(const byte pattern[8], unsigned long duration = 100) {
+// 消灯用
+inline void matrix_reset() {
   // 初回実行時にピンモード指定
   if (!matrix_started) {
     pinMode(SER_PIN, OUTPUT);
@@ -449,6 +449,14 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
     pinMode(RCLK_PIN, OUTPUT);
     matrix_started = true;
   }
+  ren(RCLK_PIN, LOW);
+  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 列
+  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 行
+  ren(RCLK_PIN, HIGH);
+}
+
+// 点灯
+void matrix(const byte pattern[8], unsigned long duration = 100) {
   unsigned long startTime = millis();
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
@@ -475,7 +483,7 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
 // 各線の列挙型
 enum Line : uint16_t { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
 // 各色の格納変数
-const byte lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
+const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 // 各色の列挙型
 enum Led { R = 0x1, G = 0x2, B = 0x4 };
 // 白（ホワイト）
@@ -587,7 +595,7 @@ inline boolean isToggleEnabled() {
 }
 
 // タクト・トグルチャタリング防止遅延 (マイクロ秒)
-const byte CHATTER_DEBOUNCE_US = 60;
+const byte CHATTER_DEBOUNCE_US = 120;
 // トグルスイッチが上げられた時に true
 boolean isTogglePulled() {
   // トグルの状態保持用
