@@ -32,7 +32,7 @@ void loop() {
   }
   bar(lineIndex[bar_gage - 1], ledIndex[bar_color - 1]);
   syncArrow();
-  if (isTactPressed(TL) && pos < SERVO_MAX) pos+=6;
-  if (isTactPressed(TR) && pos > SERVO_MIN) pos-=6;
+  if (isTactPressed(TL) && pos < SERVO_MAX) pos+=8;
+  if (isTactPressed(TR) && pos > SERVO_MIN) pos-=8;
   servo(pos);
 }
