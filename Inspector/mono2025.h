@@ -292,15 +292,15 @@ inline void dc(DCMotor action) {
  **********/
 
 // ブザー鳴動
-const uint16_t BEEP_LOW_FREQ = 400;    // 低音の周波数
-const uint16_t BEEP_MID_FREQ = 800;    // 中音の周波数
-const uint16_t BEEP_HIGH_FREQ = 1200;  // 高音の周波数
+const word BEEP_LOW_FREQ = 400;    // 低音の周波数
+const word BEEP_MID_FREQ = 800;    // 中音の周波数
+const word BEEP_HIGH_FREQ = 1200;  // 高音の周波数
 
 // ブザーの音の種類を定義する列挙型
 enum BuzzerTone { LO, MI, HI };
 
 // 型と値を同期
-const uint16_t BUZZ_FREQ[] = {
+const word BUZZ_FREQ[] = {
   BEEP_LOW_FREQ,  // LO に対応
   BEEP_MID_FREQ,  // MI に対応
   BEEP_HIGH_FREQ  // HI に対応
@@ -338,7 +338,7 @@ const byte SERVO_MAX = 160;
 boolean servo_started = false;
 
 // サーボモーター制御関数
-void servo(uint16_t angle) {
+void servo(byte angle) {
   // 初回実行時にセットアップ
   if (!servo_started) {
     srv.attach(SERVO_PIN);
@@ -486,7 +486,7 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
  ************/
 
 // 各線の列挙型
-enum Line : uint16_t { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
+enum Line : word { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 // 各色の列挙型
@@ -671,14 +671,14 @@ boolean isTactPressed(TactSwitch side) {
  *************/
 
 // 可変抵抗器の値を 0 ~ 1023 で取得
-inline uint16_t getPot() {
+inline word getPot() {
   return analogRead(POTENTIOMETER_PIN);
 }
 
 // 1023 -> 9
 byte map_volume_value() {
   // アナログ値を取得
-  uint16_t raw_value = getPot();
+  word raw_value = getPot();
   // 変換
   byte scaled_value = (byte) (raw_value * 9 / 1023);
   // 戻す
@@ -695,11 +695,11 @@ void syncPot() {
  * ジョイスティック *
  *******************/
 // X軸の値を取得
-inline uint16_t getJoyX() {
+inline word getJoyX() {
   return analogRead(JOYSTICK_X_PIN);
 }
 // Y軸の値を取得
-inline uint16_t getJoyY() {
+inline word getJoyY() {
   return analogRead(JOYSTICK_Y_PIN);
 }
 // 可動域最小値
