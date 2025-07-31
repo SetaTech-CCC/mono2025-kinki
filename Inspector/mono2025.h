@@ -182,7 +182,7 @@ inline float secs() {
 }
 
 // 秒単位で遅延
-void delaySecs(float secs_val) {
+inline void delaySecs(float secs_val) {
   delay((word) (secs_val * 1000.0f));
 }
 
@@ -194,11 +194,10 @@ void delaySecs(float secs_val) {
  * ステッピングモーター *
  **********************/
 
-boolean stepper_started = false;
-
 // ステッピングモーター
 void stepper(boolean reverse = false) {
   // 初回実行時にピンモード指定
+  static boolean stepper_started = false;
   if (!stepper_started) {
     out(STEPPER_MOTOR_1_PIN);
     out(STEPPER_MOTOR_2_PIN);
@@ -253,11 +252,10 @@ void stepper(boolean reverse = false) {
  * DCモーター *
  *************/
 
-boolean dc_started = false;
-
 // DC モーターコントローラー
 void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
   // 初回実行時にピンモード指定
+  static boolean dc_started = false;
   if (!dc_started) {
     out(DC_MOTOR_1_PIN);
     out(DC_MOTOR_2_PIN);
@@ -306,11 +304,10 @@ const word BUZZ_FREQ[] = {
   BEEP_HIGH_FREQ  // HI に対応
 };
 
-boolean buzzer_started = false;
-
 // ブザー鳴動制御
 void buzz(BuzzerTone tone_type, float duration = 0.0f) {
   // 初回実行時にピンモード指定
+  static boolean buzzer_started = false;
   if (!buzzer_started) {
     out(BUZZER_PIN);
     buzzer_started = true;
@@ -335,11 +332,10 @@ const byte SERVO_MIN = 8;
 // 可動域最大値
 const byte SERVO_MAX = 160;
 
-boolean servo_started = false;
-
 // サーボモーター制御関数
 void servo(byte angle) {
   // 初回実行時にセットアップ
+  static boolean servo_started = false;
   if (!servo_started) {
     srv.attach(SERVO_PIN);
     servo_started = true;
@@ -377,11 +373,10 @@ const Segment SEG_D = L2 | C2 | C3 | R1 | R2;
 const Segment SEG_E = L1 | L2 | C1 | C2 | C3;
 const Segment SEG_F = L1 | L2 | C1 | C2;
 
-boolean seg_started = false;
-
 // セグメント実行
 void seg(byte mask) {
   // 初回実行時にピンモード指定
+  static boolean seg_started = false;
   if (!seg_started) {
     out(SEG_L1_PIN);
     out(SEG_L2_PIN);
@@ -443,11 +438,10 @@ const byte MATRIX_RIGHT[8] = { B00011000, B00111100, B01111110, B11111111, B0001
 const byte MATRIX_UP[8] = { B00001000, B00001100, B00001110, B11111111, B11111111, B00001110, B00001100, B00001000 };
 const byte MATRIX_DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
 
-boolean matrix_started = false;
-
 // 消灯用
 inline void matrix_reset() {
   // 初回実行時にピンモード指定
+  static boolean matrix_started = false;
   if (!matrix_started) {
     out(SER_PIN);
     out(SRCLK_PIN);
@@ -504,10 +498,9 @@ const Led K = 0;
 // 各色の格納変数
 const byte ledIndex[] = { R, G, B, W, C, Y, M, K };
 
-boolean bar_started = false;
-
 void bar(int line, int color = 0) {
   // 初回実行時にピンモード指定
+  static boolean bar_started = false;
   if (!bar_started) {
     out(LED_BAR_1_PIN);
     out(LED_BAR_2_PIN);
