@@ -171,6 +171,11 @@ inline void ren(byte pin, byte level) {
   digitalWrite(pin, level);
 }
 
+// ピンモード指定
+inline void out(byte pin) {
+  pinMode(pin, OUTPUT);
+}
+
 // 秒数計算
 inline float secs() {
   return millis() / 1000.0f;
@@ -195,11 +200,11 @@ boolean stepper_started = false;
 void stepper(boolean reverse = false) {
   // 初回実行時にピンモード指定
   if (!stepper_started) {
-    pinMode(STEPPER_MOTOR_1_PIN, OUTPUT);
-    pinMode(STEPPER_MOTOR_2_PIN, OUTPUT);
-    pinMode(STEPPER_MOTOR_3_PIN, OUTPUT);
-    pinMode(STEPPER_MOTOR_4_PIN, OUTPUT);
-    pinMode(MODE_PIN, OUTPUT);
+    out(STEPPER_MOTOR_1_PIN);
+    out(STEPPER_MOTOR_2_PIN);
+    out(STEPPER_MOTOR_3_PIN);
+    out(STEPPER_MOTOR_4_PIN);
+    out(MODE_PIN);
     stepper_started = true;
   }
   // 回数フラグ
@@ -254,9 +259,9 @@ boolean dc_started = false;
 void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
   // 初回実行時にピンモード指定
   if (!dc_started) {
-    pinMode(DC_MOTOR_1_PIN, OUTPUT);
-    pinMode(DC_MOTOR_2_PIN, OUTPUT);
-    pinMode(MODE_PIN, OUTPUT);
+    out(DC_MOTOR_1_PIN);
+    out(DC_MOTOR_2_PIN);
+    out(MODE_PIN);
     dc_started = true;
   }
   // ２ピンを４パターンで制御
@@ -307,7 +312,7 @@ boolean buzzer_started = false;
 void buzz(BuzzerTone tone_type, float duration = 0.0f) {
   // 初回実行時にピンモード指定
   if (!buzzer_started) {
-    pinMode(BUZZER_PIN, OUTPUT);
+    out(BUZZER_PIN);
     buzzer_started = true;
   }
   if (duration > 0.0f) {
@@ -378,34 +383,34 @@ boolean seg_started = false;
 void seg(byte mask) {
   // 初回実行時にピンモード指定
   if (!seg_started) {
-    pinMode(SEG_L1_PIN, OUTPUT);
-    pinMode(SEG_L2_PIN, OUTPUT);
-    pinMode(SEG_C1_PIN, OUTPUT);
-    pinMode(SEG_C2_PIN, OUTPUT);
-    pinMode(SEG_C3_PIN, OUTPUT);
-    pinMode(SEG_R1_PIN, OUTPUT);
-    pinMode(SEG_R2_PIN, OUTPUT);
-    pinMode(SEG_POINT_PIN, OUTPUT);
-    pinMode(SEG_MODE_PIN, OUTPUT);
-    pinMode(MODE_PIN, OUTPUT);
+    out(SEG_L1_PIN);
+    out(SEG_L2_PIN);
+    out(SEG_C1_PIN);
+    out(SEG_C2_PIN);
+    out(SEG_C3_PIN);
+    out(SEG_R1_PIN);
+    out(SEG_R2_PIN);
+    out(SEG_POINT_PIN);
+    out(SEG_MODE_PIN);
+    out(MODE_PIN);
     seg_started = true;
   }
   // 左上
-  digitalWrite(SEG_L1_PIN, (mask & L1) ? HIGH : LOW);
+  ren(SEG_L1_PIN, (mask & L1) ? HIGH : LOW);
   // 左下
-  digitalWrite(SEG_L2_PIN, (mask & L2) ? HIGH : LOW);
+  ren(SEG_L2_PIN, (mask & L2) ? HIGH : LOW);
   // 中央上
-  digitalWrite(SEG_C1_PIN, (mask & C1) ? HIGH : LOW);
+  ren(SEG_C1_PIN, (mask & C1) ? HIGH : LOW);
   // 中央真ん中
-  digitalWrite(SEG_C2_PIN, (mask & C2) ? HIGH : LOW);
+  ren(SEG_C2_PIN, (mask & C2) ? HIGH : LOW);
   // 中央下
-  digitalWrite(SEG_C3_PIN, (mask & C3) ? HIGH : LOW);
+  ren(SEG_C3_PIN, (mask & C3) ? HIGH : LOW);
   // 右上
-  digitalWrite(SEG_R1_PIN, (mask & R1) ? HIGH : LOW);
+  ren(SEG_R1_PIN, (mask & R1) ? HIGH : LOW);
   // 右下
-  digitalWrite(SEG_R2_PIN, (mask & R2) ? HIGH : LOW);
+  ren(SEG_R2_PIN, (mask & R2) ? HIGH : LOW);
   // 小数点
-  digitalWrite(SEG_POINT_PIN, (mask & POINT) ? HIGH : LOW);
+  ren(SEG_POINT_PIN, (mask & POINT) ? HIGH : LOW);
   // セグを点灯
   ren(SEG_MODE_PIN, HIGH);
   // 送信
@@ -444,9 +449,9 @@ boolean matrix_started = false;
 inline void matrix_reset() {
   // 初回実行時にピンモード指定
   if (!matrix_started) {
-    pinMode(SER_PIN, OUTPUT);
-    pinMode(SRCLK_PIN, OUTPUT);
-    pinMode(RCLK_PIN, OUTPUT);
+    out(SER_PIN);
+    out(SRCLK_PIN);
+    out(RCLK_PIN);
     matrix_started = true;
   }
   ren(RCLK_PIN, LOW);
@@ -504,33 +509,33 @@ boolean bar_started = false;
 void bar(int line, int color = 0) {
   // 初回実行時にピンモード指定
   if (!bar_started) {
-    pinMode(LED_BAR_1_PIN, OUTPUT);
-    pinMode(LED_BAR_2_PIN, OUTPUT);
-    pinMode(LED_BAR_3_PIN, OUTPUT);
-    pinMode(LED_BAR_4_PIN, OUTPUT);
-    pinMode(LED_BAR_5_PIN, OUTPUT);
-    pinMode(LED_BAR_6_PIN, OUTPUT);
-    pinMode(LED_BAR_7_PIN, OUTPUT);
-    pinMode(LED_BAR_8_PIN, OUTPUT);
-    pinMode(LED_BAR_9_PIN, OUTPUT);
-    pinMode(LED_BAR_10_PIN, OUTPUT);
-    pinMode(LED_RED_PIN, OUTPUT);
-    pinMode(LED_GREEN_PIN, OUTPUT);
-    pinMode(LED_BLUE_PIN, OUTPUT);
+    out(LED_BAR_1_PIN);
+    out(LED_BAR_2_PIN);
+    out(LED_BAR_3_PIN);
+    out(LED_BAR_4_PIN);
+    out(LED_BAR_5_PIN);
+    out(LED_BAR_6_PIN);
+    out(LED_BAR_7_PIN);
+    out(LED_BAR_8_PIN);
+    out(LED_BAR_9_PIN);
+    out(LED_BAR_10_PIN);
+    out(LED_RED_PIN);
+    out(LED_GREEN_PIN);
+    out(LED_BLUE_PIN);
   }
-  digitalWrite(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
-  digitalWrite(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
-  digitalWrite(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
-  digitalWrite(LED_BAR_4_PIN, (line & P4) ? HIGH : LOW);
-  digitalWrite(LED_BAR_5_PIN, (line & P5) ? HIGH : LOW);
-  digitalWrite(LED_BAR_6_PIN, (line & P6) ? HIGH : LOW);
-  digitalWrite(LED_BAR_7_PIN, (line & P7) ? HIGH : LOW);
-  digitalWrite(LED_BAR_8_PIN, (line & P8) ? HIGH : LOW);
-  digitalWrite(LED_BAR_9_PIN, (line & P9) ? HIGH : LOW);
-  digitalWrite(LED_BAR_10_PIN, (line & P10) ? HIGH : LOW);
-  digitalWrite(LED_RED_PIN, (color & R) ? LOW : HIGH);
-  digitalWrite(LED_GREEN_PIN, (color & G) ? LOW : HIGH);
-  digitalWrite(LED_BLUE_PIN, (color & B) ? LOW : HIGH);
+  ren(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
+  ren(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
+  ren(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
+  ren(LED_BAR_4_PIN, (line & P4) ? HIGH : LOW);
+  ren(LED_BAR_5_PIN, (line & P5) ? HIGH : LOW);
+  ren(LED_BAR_6_PIN, (line & P6) ? HIGH : LOW);
+  ren(LED_BAR_7_PIN, (line & P7) ? HIGH : LOW);
+  ren(LED_BAR_8_PIN, (line & P8) ? HIGH : LOW);
+  ren(LED_BAR_9_PIN, (line & P9) ? HIGH : LOW);
+  ren(LED_BAR_10_PIN, (line & P10) ? HIGH : LOW);
+  ren(LED_RED_PIN, (color & R) ? LOW : HIGH);
+  ren(LED_GREEN_PIN, (color & G) ? LOW : HIGH);
+  ren(LED_BLUE_PIN, (color & B) ? LOW : HIGH);
 }
 
 /********************
@@ -697,12 +702,15 @@ inline uint16_t getJoyX() {
 inline uint16_t getJoyY() {
   return analogRead(JOYSTICK_Y_PIN);
 }
-// 可動域
+// 可動域最小値
 const int THRESHOLD_LOW  = 350;
+// 可動域最大値
 const int THRESHOLD_HIGH = 650;
 // LED マトリックスと向きを同期
 void syncArrow() {
+  // X軸
   int xValue = getJoyX();
+  // Y軸
   int yValue = getJoyY();
   if (yValue < THRESHOLD_LOW) {
     matrix(MATRIX_UP);
