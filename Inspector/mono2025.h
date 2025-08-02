@@ -174,7 +174,7 @@ inline float secs() {
 }
 
 // 秒単位で遅延
-inline void delaySecs(float secs_val) {
+inline void delaySecs(const float secs_val) {
   delay((word) (secs_val * 1000.0f));
 }
 
@@ -187,7 +187,7 @@ inline void delaySecs(float secs_val) {
  **********************/
 
 // ステッピングモーター
-void stepper(boolean reverse = false) {
+void stepper(const boolean reverse = false) {
   // 回数フラグ
   static byte stepper_flag = 0;
   stepper_flag++;
@@ -235,7 +235,7 @@ void stepper(boolean reverse = false) {
  *************/
 
 // DC モーターコントローラー
-void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
+void dc_ctr(const boolean left_ctrl = false, const boolean right_ctrl = false) {
   // ２ピンを４パターンで制御
   digitalWrite(DC_MOTOR_1_PIN, left_ctrl ? HIGH : LOW);
   digitalWrite(DC_MOTOR_2_PIN, right_ctrl ? HIGH : LOW);
@@ -250,7 +250,7 @@ void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
 enum DCMotor { LT, RT, S, F };
 
 // DCモーター制御
-void dc(DCMotor action) {
+void dc(const DCMotor action) {
   switch (action) {
     case LT: dc_ctr(true, false); break;
     case RT: dc_ctr(false, true); break;
@@ -279,7 +279,7 @@ const word BUZZ_FREQ[] = {
 };
 
 // ブザー鳴動制御
-void buzz(BuzzerTone tone_type, float duration = 0.0f) {
+void buzz(const BuzzerTone tone_type = LO, const float duration = 0.0f) {
   if (duration > 0.0f) {
     // 鳴動
     tone(BUZZER_PIN, BUZZ_FREQ[tone_type], (word) (duration * 1000.0f));
@@ -301,7 +301,7 @@ const byte SERVO_MIN = 8;
 const byte SERVO_MAX = 160;
 
 // サーボモーター制御関数
-void servo(byte angle) {
+void servo(const byte angle) {
   // 適用
   srv.write(constrain(angle, SERVO_MIN, SERVO_MAX));
 }
@@ -394,7 +394,7 @@ void matrix_reset() {
 }
 
 // 点灯
-void matrix(const byte pattern[8], unsigned long duration = 100) {
+void matrix(const byte pattern[8], const unsigned long duration = 100) {
   unsigned long startTime = millis();
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
@@ -437,7 +437,7 @@ const Led K = 0;
 // 各色の格納変数
 const byte ledIndex[] = { R, G, B, W, C, Y, M, K };
 
-void bar(const word line, byte color = 0) {
+void bar(const word line, const byte color = 0) {
   digitalWrite(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
   digitalWrite(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
   digitalWrite(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
@@ -463,7 +463,7 @@ inline boolean isPhotoEnabled() {
 }
 
 // フォトインタラプタの羽が指定回数通過した瞬間に true
-boolean isPhotoPassed(byte rotation = 1) {
+boolean isPhotoPassed(const byte rotation = 1) {
   // 瞬間検知のための状態保持フラグ
   static boolean photo_state = false;
   // 通過回数カウンター
@@ -555,12 +555,12 @@ const byte TACT_PINS[] = {
 };
 
 // 指定された側のタクトスイッチが押され続けている時は true
-boolean isTactEnabled(TactSwitch side) {
+boolean isTactEnabled(const TactSwitch side) {
   return digitalRead(TACT_PINS[side]);
 }
 
 // 指定された側のタクトスイッチが１回押された時に true
-boolean isTactPressed(TactSwitch side) {
+boolean isTactPressed(const TactSwitch side) {
   // スイッチの状態保持用
   static boolean tact_pressed_state[6] = { true, true, true, true, true, true };
   // チャタリング防止
