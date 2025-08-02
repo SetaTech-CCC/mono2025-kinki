@@ -341,7 +341,7 @@ void servo(byte angle) {
     servo_started = true;
   }
   // 適用
-  srv.write(angle);
+  srv.write(constrain(angle, SERVO_MIN, SERVO_MAX));
 }
 
 /*********
