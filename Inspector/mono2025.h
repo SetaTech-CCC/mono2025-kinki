@@ -670,12 +670,7 @@ inline word getPot() {
 
 // 1023 -> 9
 byte map_volume_value() {
-  // アナログ値を取得
-  word raw_value = getPot();
-  // 変換
-  byte scaled_value = (byte) (raw_value * 9 / 1023);
-  // 戻す
-  return scaled_value;
+  return map(getPot(), 0, 1023, 0, 9);
 }
 
 // 可変抵抗器と7セグを同期
