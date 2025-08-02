@@ -26,12 +26,12 @@
  *   3°ずつ動く。
  *   引数なしでは時計回りに動く。
  *   引数の reverse を true にすると、反時計回りに動く。
- *   
+ * 
  * ・dc(action)
  *   DCモーターを制御する。
  *   引数には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
  *   引数の文字にダブルクォーテーションは不要。
- *   
+ * 
  * ・buzz(tone_type, duration)
  *   ブザー鳴動関数。
  *   tone_type は周波数で、HI(高音)、MI(中音)、LO(低音)がある。
@@ -142,6 +142,8 @@ const byte SERVO_PIN = 41;
 const byte SER_PIN = 38; // シリアル入力
 const byte SRCLK_PIN = 39; // シフトクロック
 const byte RCLK_PIN = 40; // ラッチクロック
+// 書き込みピン
+const byte PIN_WRITE[] = { LED_RED_PIN, LED_GREEN_PIN, LED_BLUE_PIN, LED_BAR_1_PIN, LED_BAR_2_PIN, LED_BAR_3_PIN, LED_BAR_4_PIN, LED_BAR_5_PIN, LED_BAR_6_PIN, LED_BAR_7_PIN, LED_BAR_8_PIN, LED_BAR_9_PIN, LED_BAR_10_PIN, BUZZER_PIN, MODE_PIN, SEG_MODE_PIN, SEG_L1_PIN, SEG_L2_PIN, SEG_C1_PIN, SEG_C2_PIN, SEG_C3_PIN, SEG_R1_PIN, SEG_R2_PIN, SEG_POINT_PIN, SER_PIN, SRCLK_PIN, RCLK_PIN  };
 
 // フォトインタラプタ
 const byte PHOTO_INTERRUPTER_PIN = 42;
@@ -166,16 +168,6 @@ const byte PIN_READ[] = { PHOTO_INTERRUPTER_PIN, TOGGLE_PIN, TACT_TEST_LEFT_PIN,
  * 補助関数 *
  ***********/
 
-// デジタルピンに書き込み
-inline void ren(byte pin, byte level) {
-  digitalWrite(pin, level);
-}
-
-// ピンモード指定
-inline void out(byte pin) {
-  pinMode(pin, OUTPUT);
-}
-
 // 秒数計算
 inline float secs() {
   return millis() / 1000.0f;
@@ -196,16 +188,6 @@ inline void delaySecs(float secs_val) {
 
 // ステッピングモーター
 void stepper(boolean reverse = false) {
-  // 初回実行時にピンモード指定
-  static boolean stepper_started = false;
-  if (!stepper_started) {
-    out(STEPPER_MOTOR_1_PIN);
-    out(STEPPER_MOTOR_2_PIN);
-    out(STEPPER_MOTOR_3_PIN);
-    out(STEPPER_MOTOR_4_PIN);
-    out(MODE_PIN);
-    stepper_started = true;
-  }
   // 回数フラグ
   static byte stepper_flag = 0;
   stepper_flag++;
@@ -213,39 +195,39 @@ void stepper(boolean reverse = false) {
   switch (stepper_flag) {
 
     case 1:
-      ren(STEPPER_MOTOR_1_PIN, HIGH);
-      ren(STEPPER_MOTOR_2_PIN, LOW);
-      ren(STEPPER_MOTOR_3_PIN, LOW);
-      ren(STEPPER_MOTOR_4_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_1_PIN, HIGH);
+      digitalWrite(STEPPER_MOTOR_2_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_4_PIN, LOW);
       break;
 
     case 2:
-      ren(STEPPER_MOTOR_1_PIN, LOW);
-      ren(STEPPER_MOTOR_2_PIN, reverse ? LOW : HIGH);
-      ren(STEPPER_MOTOR_3_PIN, LOW);
-      ren(STEPPER_MOTOR_4_PIN, reverse ? HIGH : LOW);
+      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_2_PIN, reverse ? LOW : HIGH);
+      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_4_PIN, reverse ? HIGH : LOW);
       break;
 
     case 3:
-      ren(STEPPER_MOTOR_1_PIN, LOW);
-      ren(STEPPER_MOTOR_2_PIN, LOW);
-      ren(STEPPER_MOTOR_3_PIN, HIGH);
-      ren(STEPPER_MOTOR_4_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_2_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_3_PIN, HIGH);
+      digitalWrite(STEPPER_MOTOR_4_PIN, LOW);
       break;
 
     case 4:
-      ren(STEPPER_MOTOR_1_PIN, LOW);
-      ren(STEPPER_MOTOR_2_PIN, reverse ? HIGH : LOW);
-      ren(STEPPER_MOTOR_3_PIN, LOW);
-      ren(STEPPER_MOTOR_4_PIN, reverse ? LOW : HIGH);
+      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_2_PIN, reverse ? HIGH : LOW);
+      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
+      digitalWrite(STEPPER_MOTOR_4_PIN, reverse ? LOW : HIGH);
       stepper_flag = 0;
       break;
   }
   // 書き換え
-  ren(MODE_PIN, LOW);
-  ren(MODE_PIN, HIGH);
+  digitalWrite(MODE_PIN, LOW);
+  digitalWrite(MODE_PIN, HIGH);
   // セグを消灯
-  ren(SEG_MODE_PIN, LOW);
+  digitalWrite(SEG_MODE_PIN, LOW);
 }
 
 /*************
@@ -254,29 +236,21 @@ void stepper(boolean reverse = false) {
 
 // DC モーターコントローラー
 void dc_ctr(boolean left_ctrl = false, boolean right_ctrl = false) {
-  // 初回実行時にピンモード指定
-  static boolean dc_started = false;
-  if (!dc_started) {
-    out(DC_MOTOR_1_PIN);
-    out(DC_MOTOR_2_PIN);
-    out(MODE_PIN);
-    dc_started = true;
-  }
   // ２ピンを４パターンで制御
-  ren(DC_MOTOR_1_PIN, left_ctrl ? HIGH : LOW);
-  ren(DC_MOTOR_2_PIN, right_ctrl ? HIGH : LOW);
+  digitalWrite(DC_MOTOR_1_PIN, left_ctrl ? HIGH : LOW);
+  digitalWrite(DC_MOTOR_2_PIN, right_ctrl ? HIGH : LOW);
   // 書き換え
-  ren(MODE_PIN, LOW);
-  ren(MODE_PIN, HIGH);
+  digitalWrite(MODE_PIN, LOW);
+  digitalWrite(MODE_PIN, HIGH);
   // セグを消灯
-  ren(SEG_MODE_PIN, LOW);
+  digitalWrite(SEG_MODE_PIN, LOW);
 }
 
 // DCモーターの動作モードを定義する列挙型
 enum DCMotor { LT, RT, S, F };
 
 // DCモーター制御
-inline void dc(DCMotor action) {
+void dc(DCMotor action) {
   switch (action) {
     case LT: dc_ctr(true, false); break;
     case RT: dc_ctr(false, true); break;
@@ -306,12 +280,6 @@ const word BUZZ_FREQ[] = {
 
 // ブザー鳴動制御
 void buzz(BuzzerTone tone_type, float duration = 0.0f) {
-  // 初回実行時にピンモード指定
-  static boolean buzzer_started = false;
-  if (!buzzer_started) {
-    out(BUZZER_PIN);
-    buzzer_started = true;
-  }
   if (duration > 0.0f) {
     // 鳴動
     tone(BUZZER_PIN, BUZZ_FREQ[tone_type], (word) (duration * 1000.0f));
@@ -334,12 +302,6 @@ const byte SERVO_MAX = 160;
 
 // サーボモーター制御関数
 void servo(byte angle) {
-  // 初回実行時にセットアップ
-  static boolean servo_started = false;
-  if (!servo_started) {
-    srv.attach(SERVO_PIN);
-    servo_started = true;
-  }
   // 適用
   srv.write(constrain(angle, SERVO_MIN, SERVO_MAX));
 }
@@ -374,42 +336,27 @@ const Segment SEG_E = L1 | L2 | C1 | C2 | C3;
 const Segment SEG_F = L1 | L2 | C1 | C2;
 
 // セグメント実行
-void seg(byte mask) {
-  // 初回実行時にピンモード指定
-  static boolean seg_started = false;
-  if (!seg_started) {
-    out(SEG_L1_PIN);
-    out(SEG_L2_PIN);
-    out(SEG_C1_PIN);
-    out(SEG_C2_PIN);
-    out(SEG_C3_PIN);
-    out(SEG_R1_PIN);
-    out(SEG_R2_PIN);
-    out(SEG_POINT_PIN);
-    out(SEG_MODE_PIN);
-    out(MODE_PIN);
-    seg_started = true;
-  }
+void seg(const byte mask) {
   // 左上
-  ren(SEG_L1_PIN, (mask & L1) ? HIGH : LOW);
+  digitalWrite(SEG_L1_PIN, (mask & L1) ? HIGH : LOW);
   // 左下
-  ren(SEG_L2_PIN, (mask & L2) ? HIGH : LOW);
+  digitalWrite(SEG_L2_PIN, (mask & L2) ? HIGH : LOW);
   // 中央上
-  ren(SEG_C1_PIN, (mask & C1) ? HIGH : LOW);
+  digitalWrite(SEG_C1_PIN, (mask & C1) ? HIGH : LOW);
   // 中央真ん中
-  ren(SEG_C2_PIN, (mask & C2) ? HIGH : LOW);
+  digitalWrite(SEG_C2_PIN, (mask & C2) ? HIGH : LOW);
   // 中央下
-  ren(SEG_C3_PIN, (mask & C3) ? HIGH : LOW);
+  digitalWrite(SEG_C3_PIN, (mask & C3) ? HIGH : LOW);
   // 右上
-  ren(SEG_R1_PIN, (mask & R1) ? HIGH : LOW);
+  digitalWrite(SEG_R1_PIN, (mask & R1) ? HIGH : LOW);
   // 右下
-  ren(SEG_R2_PIN, (mask & R2) ? HIGH : LOW);
+  digitalWrite(SEG_R2_PIN, (mask & R2) ? HIGH : LOW);
   // 小数点
-  ren(SEG_POINT_PIN, (mask & POINT) ? HIGH : LOW);
+  digitalWrite(SEG_POINT_PIN, (mask & POINT) ? HIGH : LOW);
   // セグを点灯
-  ren(SEG_MODE_PIN, HIGH);
+  digitalWrite(SEG_MODE_PIN, HIGH);
   // 送信
-  ren(MODE_PIN, LOW);
+  digitalWrite(MODE_PIN, LOW);
 }
 
 /*******************
@@ -439,19 +386,11 @@ const byte MATRIX_UP[8] = { B00001000, B00001100, B00001110, B11111111, B1111111
 const byte MATRIX_DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
 
 // 消灯用
-inline void matrix_reset() {
-  // 初回実行時にピンモード指定
-  static boolean matrix_started = false;
-  if (!matrix_started) {
-    out(SER_PIN);
-    out(SRCLK_PIN);
-    out(RCLK_PIN);
-    matrix_started = true;
-  }
-  ren(RCLK_PIN, LOW);
+void matrix_reset() {
+  digitalWrite(RCLK_PIN, LOW);
   shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 列
   shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 行
-  ren(RCLK_PIN, HIGH);
+  digitalWrite(RCLK_PIN, HIGH);
 }
 
 // 点灯
@@ -464,13 +403,13 @@ void matrix(const byte pattern[8], unsigned long duration = 100) {
       // 残像防止のため、一旦非表示
       matrix_reset();
       // ラッチピンを下げて、データ送信を開始
-      ren(RCLK_PIN, LOW);
+      digitalWrite(RCLK_PIN, LOW);
       // 列
       shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[row]);
       // 行
       shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, 1 << row);
       // ラッチピンを上げて、シフトレジスタのデータに反映させる
-      ren(RCLK_PIN, HIGH);
+      digitalWrite(RCLK_PIN, HIGH);
     }
   }
 }
@@ -498,37 +437,20 @@ const Led K = 0;
 // 各色の格納変数
 const byte ledIndex[] = { R, G, B, W, C, Y, M, K };
 
-void bar(int line, int color = 0) {
-  // 初回実行時にピンモード指定
-  static boolean bar_started = false;
-  if (!bar_started) {
-    out(LED_BAR_1_PIN);
-    out(LED_BAR_2_PIN);
-    out(LED_BAR_3_PIN);
-    out(LED_BAR_4_PIN);
-    out(LED_BAR_5_PIN);
-    out(LED_BAR_6_PIN);
-    out(LED_BAR_7_PIN);
-    out(LED_BAR_8_PIN);
-    out(LED_BAR_9_PIN);
-    out(LED_BAR_10_PIN);
-    out(LED_RED_PIN);
-    out(LED_GREEN_PIN);
-    out(LED_BLUE_PIN);
-  }
-  ren(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
-  ren(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
-  ren(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
-  ren(LED_BAR_4_PIN, (line & P4) ? HIGH : LOW);
-  ren(LED_BAR_5_PIN, (line & P5) ? HIGH : LOW);
-  ren(LED_BAR_6_PIN, (line & P6) ? HIGH : LOW);
-  ren(LED_BAR_7_PIN, (line & P7) ? HIGH : LOW);
-  ren(LED_BAR_8_PIN, (line & P8) ? HIGH : LOW);
-  ren(LED_BAR_9_PIN, (line & P9) ? HIGH : LOW);
-  ren(LED_BAR_10_PIN, (line & P10) ? HIGH : LOW);
-  ren(LED_RED_PIN, (color & R) ? LOW : HIGH);
-  ren(LED_GREEN_PIN, (color & G) ? LOW : HIGH);
-  ren(LED_BLUE_PIN, (color & B) ? LOW : HIGH);
+void bar(const word line, byte color = 0) {
+  digitalWrite(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
+  digitalWrite(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
+  digitalWrite(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
+  digitalWrite(LED_BAR_4_PIN, (line & P4) ? HIGH : LOW);
+  digitalWrite(LED_BAR_5_PIN, (line & P5) ? HIGH : LOW);
+  digitalWrite(LED_BAR_6_PIN, (line & P6) ? HIGH : LOW);
+  digitalWrite(LED_BAR_7_PIN, (line & P7) ? HIGH : LOW);
+  digitalWrite(LED_BAR_8_PIN, (line & P8) ? HIGH : LOW);
+  digitalWrite(LED_BAR_9_PIN, (line & P9) ? HIGH : LOW);
+  digitalWrite(LED_BAR_10_PIN, (line & P10) ? HIGH : LOW);
+  digitalWrite(LED_RED_PIN, (color & R) ? LOW : HIGH);
+  digitalWrite(LED_GREEN_PIN, (color & G) ? LOW : HIGH);
+  digitalWrite(LED_BLUE_PIN, (color & B) ? LOW : HIGH);
 }
 
 /********************
@@ -622,19 +544,19 @@ boolean isTogglePulled() {
 
 // タクトスイッチの左右を識別する列挙型
 enum TactSwitch { TL, TR, LL, LR, RL, RR };
+// タクトスイッチの全ピン（列挙型変数に対応）
+const byte TACT_PINS[] = {
+  TACT_TEST_LEFT_PIN,
+  TACT_TEST_RIGHT_PIN,
+  TACT_LEFT_LEFT_PIN,
+  TACT_LEFT_RIGHT_PIN,
+  TACT_RIGHT_LEFT_PIN,
+  TACT_RIGHT_RIGHT_PIN
+};
 
 // 指定された側のタクトスイッチが押され続けている時は true
 boolean isTactEnabled(TactSwitch side) {
-  static byte pin;
-  switch (side) {
-    case TL: pin = TACT_TEST_LEFT_PIN; break;
-    case TR: pin = TACT_TEST_RIGHT_PIN; break;
-    case LL: pin = TACT_LEFT_LEFT_PIN; break;
-    case LR: pin = TACT_LEFT_RIGHT_PIN; break;
-    case RL: pin = TACT_RIGHT_LEFT_PIN; break;
-    case RR: pin = TACT_RIGHT_RIGHT_PIN; break;
-  }
-  return digitalRead(pin);
+  return digitalRead(TACT_PINS[side]);
 }
 
 // 指定された側のタクトスイッチが１回押された時に true
@@ -669,14 +591,14 @@ inline word getPot() {
 }
 
 // 1023 -> 9
-byte map_volume_value() {
+inline byte map_pot_value() {
   return map(getPot(), 0, 1023, 0, 9);
 }
 
 // 可変抵抗器と7セグを同期
 void syncPot() {
   // ７セグに表示
-  seg(num[map_volume_value()]);
+  seg(num[map_pot_value()]);
 }
 
 /*******************
@@ -724,8 +646,12 @@ void start(void);
 void setup() {
   // ボードレートを指定
   Serial.begin(9600);
+  // 出力ピンの割り当て
+  for (byte i = 0; i < sizeof(PIN_WRITE) / sizeof(PIN_WRITE[0]); i++) pinMode(PIN_READ[i], OUTPUT);
   // 入力ピンの割り当て
   for (byte i = 0; i < sizeof(PIN_READ) / sizeof(PIN_READ[0]); i++) pinMode(PIN_READ[i], INPUT);
+  // サーボの初期化
+  srv.attach(SERVO_PIN);
   // オプション関数
   start();
 }
