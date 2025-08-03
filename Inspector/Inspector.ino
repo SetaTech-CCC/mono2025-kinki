@@ -54,7 +54,7 @@ void loop() {
     buzz(HI, 0.2);
   }
   // LEDバー点灯
-  bar(lineIndex[bar_gage - 1], ledIndex[bar_color - 1]);
+  bar(lineIndex[bar_gage - 1], rgbIndex[bar_color - 1]);
   // LEDマトリックスとジョイスティックを同期
   syncArrow();
   // サーボ角度増加（大会基盤上の左側のタクトが押された時）

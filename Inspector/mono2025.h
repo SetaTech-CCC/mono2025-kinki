@@ -32,9 +32,9 @@
  *   引数には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
  *   引数の文字にダブルクォーテーションは不要。
  * 
- * ・buzz(tone_type, duration)
+ * ・buzz(level, duration)
  *   ブザー鳴動関数。
- *   tone_type は周波数で、HI(高音)、MI(中音)、LO(低音)がある。
+ *   level は周波数で、HI(高音)、MI(中音)、LO(低音)がある。
  *   これらにダブルクォーテーションは不要。
  *   音の長さは２つ目の引数である duration に秒数で入れる。小数第一位まで対応。
  * 
@@ -46,14 +46,14 @@
  *   7セグ制御関数。
  *   以下は引数の例：
  *   番号：num[8] (0〜9)
- *   アルファベット：SEG_A (ABCDEFのみ)
+ *   アルファベット：sg.A (ABCDEFのみ)
  *   特定のセグ：(L1 + R2 + C3) (L1,L2,C1,C2,C3,R1,R2,POINT)
  *   セグ右下の小数点は POINT を使用する。
  * 
  * ・matrix(pattern, duration)
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
- * 　MATRIX_[UP, DOWN, LEFT, RIGHT], MATRIX_[LEFT, UP]_[1-8]
+ * 　mt.[UP, DOWN, LEFT, RIGHT], mt.[LEFT, UP]_[1-8]
  * 　または、int[8] で自作のデザインを作る。
  * 　duration は表示する長さ。規定は 100ms。
  * 
@@ -61,7 +61,7 @@
  * 　10色LEDバー制御関数。
  * 　line には、P[1-10] を入れる。
  * 　(P1 | P6) の様に足し算も可能。
- * 　color は、RGBWCYMK を入れる。
+ * 　color は、R,G,B,W,C,Y,M,K を入れる。
  * 
  * ・isPhotoEnabled()
  *   フォトインタラプタが遮断されている間 true を返す。
@@ -143,7 +143,7 @@ const byte SER_PIN = 38; // シリアル入力
 const byte SRCLK_PIN = 39; // シフトクロック
 const byte RCLK_PIN = 40; // ラッチクロック
 // 書き込みピン
-const byte PIN_WRITE[] = { LED_RED_PIN, LED_GREEN_PIN, LED_BLUE_PIN, LED_BAR_1_PIN, LED_BAR_2_PIN, LED_BAR_3_PIN, LED_BAR_4_PIN, LED_BAR_5_PIN, LED_BAR_6_PIN, LED_BAR_7_PIN, LED_BAR_8_PIN, LED_BAR_9_PIN, LED_BAR_10_PIN, BUZZER_PIN, MODE_PIN, SEG_MODE_PIN, SEG_L1_PIN, SEG_L2_PIN, SEG_C1_PIN, SEG_C2_PIN, SEG_C3_PIN, SEG_R1_PIN, SEG_R2_PIN, SEG_POINT_PIN, SER_PIN, SRCLK_PIN, RCLK_PIN  };
+const byte PIN_WRITE[] = { LED_RED_PIN, LED_GREEN_PIN, LED_BLUE_PIN, LED_BAR_1_PIN, LED_BAR_2_PIN, LED_BAR_3_PIN, LED_BAR_4_PIN, LED_BAR_5_PIN, LED_BAR_6_PIN, LED_BAR_7_PIN, LED_BAR_8_PIN, LED_BAR_9_PIN, LED_BAR_10_PIN, BUZZER_PIN, MODE_PIN, SEG_MODE_PIN, SEG_L1_PIN, SEG_L2_PIN, SEG_C1_PIN, SEG_C2_PIN, SEG_C3_PIN, SEG_R1_PIN, SEG_R2_PIN, SEG_POINT_PIN, SER_PIN, SRCLK_PIN, RCLK_PIN };
 
 // フォトインタラプタ
 const byte PHOTO_INTERRUPTER_PIN = 42;
@@ -234,11 +234,14 @@ void stepper(const boolean reverse = false) {
  * DCモーター *
  *************/
 
-// DC モーターコントローラー
-void dc_ctr(const boolean left_ctrl = false, const boolean right_ctrl = false) {
+// DCモーターの動作モードを定義する列挙型
+enum DCMotor { LT, RT, S, F };
+
+// DC モーター制御
+void dc(const DCMotor action) {
   // ２ピンを４パターンで制御
-  digitalWrite(DC_MOTOR_1_PIN, left_ctrl ? HIGH : LOW);
-  digitalWrite(DC_MOTOR_2_PIN, right_ctrl ? HIGH : LOW);
+  digitalWrite(DC_MOTOR_1_PIN, (action == LT || action == S));
+  digitalWrite(DC_MOTOR_2_PIN, (action == RT || action == S));
   // 書き換え
   digitalWrite(MODE_PIN, LOW);
   digitalWrite(MODE_PIN, HIGH);
@@ -246,43 +249,25 @@ void dc_ctr(const boolean left_ctrl = false, const boolean right_ctrl = false) {
   digitalWrite(SEG_MODE_PIN, LOW);
 }
 
-// DCモーターの動作モードを定義する列挙型
-enum DCMotor { LT, RT, S, F };
-
-// DCモーター制御
-void dc(const DCMotor action) {
-  switch (action) {
-    case LT: dc_ctr(true, false); break;
-    case RT: dc_ctr(false, true); break;
-    case S: dc_ctr(true, true); break;
-    case F: dc_ctr(false, false); break;
-  }
-}
-
 /**********
  * ブザー *
  **********/
-
-// ブザー鳴動
-const word BEEP_LOW_FREQ = 400;    // 低音の周波数
-const word BEEP_MID_FREQ = 800;    // 中音の周波数
-const word BEEP_HIGH_FREQ = 1200;  // 高音の周波数
 
 // ブザーの音の種類を定義する列挙型
 enum BuzzerTone { LO, MI, HI };
 
 // 型と値を同期
 const word BUZZ_FREQ[] = {
-  BEEP_LOW_FREQ,  // LO に対応
-  BEEP_MID_FREQ,  // MI に対応
-  BEEP_HIGH_FREQ  // HI に対応
+  /* 低音 */ 400,
+  /* 中音 */ 800,
+  /* 高音 */ 1200
 };
 
 // ブザー鳴動制御
-void buzz(const BuzzerTone tone_type = LO, const float duration = 0.0f) {
+void buzz(const BuzzerTone level = LO, const float duration = 0.0f) {
   if (duration > 0.0f) {
     // 鳴動
-    tone(BUZZER_PIN, BUZZ_FREQ[tone_type], (word) (duration * 1000.0f));
+    tone(BUZZER_PIN, BUZZ_FREQ[level], (word) (duration * 1000.0f));
   } else {
     // 消音
     noTone(BUZZER_PIN);
@@ -313,7 +298,23 @@ void servo(const byte angle) {
 // 7セグ の列挙型
 enum Segment { L1 = 0x01, L2 = 0x02, C1 = 0x04, C2 = 0x08, C3 = 0x10, R1 = 0x20, R2 = 0x40, POINT = 0x80 };
 
-// int で直接できるように数字のみの配列を用意
+struct SegPins {
+  byte pin;
+  Segment mask;
+};
+
+const SegPins seg_pins[] = {
+  { SEG_L1_PIN, L1 }, // 左上
+  { SEG_L2_PIN, L2 }, // 左下
+  { SEG_C1_PIN, C1 }, // 中央上
+  { SEG_C2_PIN, C2 }, // 中央真ん中
+  { SEG_C3_PIN, C3 }, // 中央下
+  { SEG_R1_PIN, R1 }, // 右上
+  { SEG_R2_PIN, R2 }, // 右下
+  { SEG_POINT_PIN, POINT } // 小数点
+};
+
+// int で直接描写できるように数字のみの配列を用意
 const Segment num[] = {
   /* 0 */ L1 | L2 | C1 | C3 | R1 | R2,
   /* 1 */ R1 | R2,
@@ -328,31 +329,19 @@ const Segment num[] = {
 };
 
 // アルファベット
-const Segment SEG_A = L1 | L2 | C1 | C2 | R1 | R2;
-const Segment SEG_B = L1 | L2 | C2 | C3 | R2;
-const Segment SEG_C = L2 | C2 | C3;
-const Segment SEG_D = L2 | C2 | C3 | R1 | R2;
-const Segment SEG_E = L1 | L2 | C1 | C2 | C3;
-const Segment SEG_F = L1 | L2 | C1 | C2;
+struct SegAlphabets {
+  const Segment A = L1 | L2 | C1 | C2 | R1 | R2;
+  const Segment B = L1 | L2 | C2 | C3 | R2;
+  const Segment C = L2 | C2 | C3;
+  const Segment D = L2 | C2 | C3 | R1 | R2;
+  const Segment E = L1 | L2 | C1 | C2 | C3;
+  const Segment F = L1 | L2 | C1 | C2;
+} const sg;
 
 // セグメント実行
 void seg(const byte mask) {
-  // 左上
-  digitalWrite(SEG_L1_PIN, (mask & L1) ? HIGH : LOW);
-  // 左下
-  digitalWrite(SEG_L2_PIN, (mask & L2) ? HIGH : LOW);
-  // 中央上
-  digitalWrite(SEG_C1_PIN, (mask & C1) ? HIGH : LOW);
-  // 中央真ん中
-  digitalWrite(SEG_C2_PIN, (mask & C2) ? HIGH : LOW);
-  // 中央下
-  digitalWrite(SEG_C3_PIN, (mask & C3) ? HIGH : LOW);
-  // 右上
-  digitalWrite(SEG_R1_PIN, (mask & R1) ? HIGH : LOW);
-  // 右下
-  digitalWrite(SEG_R2_PIN, (mask & R2) ? HIGH : LOW);
-  // 小数点
-  digitalWrite(SEG_POINT_PIN, (mask & POINT) ? HIGH : LOW);
+  for (byte i = 0; i < sizeof(seg_pins) / sizeof(seg_pins[0]); i++)
+    digitalWrite(seg_pins[i].pin, (mask & seg_pins[i].mask));
   // セグを点灯
   digitalWrite(SEG_MODE_PIN, HIGH);
   // 送信
@@ -363,27 +352,29 @@ void seg(const byte mask) {
  * LED マトリックス *
  *******************/
 
-const byte MATRIX_0[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
-const byte MATRIX_LEFT_1[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111 };
-const byte MATRIX_LEFT_2[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B00000000 };
-const byte MATRIX_LEFT_3[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B00000000, B00000000 };
-const byte MATRIX_LEFT_4[8] = { B00000000, B00000000, B00000000, B00000000, B11111111, B00000000, B00000000, B00000000 };
-const byte MATRIX_LEFT_5[8] = { B00000000, B00000000, B00000000, B11111111, B00000000, B00000000, B00000000, B00000000 };
-const byte MATRIX_LEFT_6[8] = { B00000000, B00000000, B11111111, B00000000, B00000000, B00000000, B00000000, B00000000 };
-const byte MATRIX_LEFT_7[8] = { B00000000, B11111111, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
-const byte MATRIX_LEFT_8[8] = { B11111111, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
-const byte MATRIX_UP_1[8] = { B00000001, B00000001, B00000001, B00000001, B00000001, B00000001, B00000001, B00000001 };
-const byte MATRIX_UP_2[8] = { B00000010, B00000010, B00000010, B00000010, B00000010, B00000010, B00000010, B00000010 };
-const byte MATRIX_UP_3[8] = { B00000100, B00000100, B00000100, B00000100, B00000100, B00000100, B00000100, B00000100 };
-const byte MATRIX_UP_4[8] = { B00001000, B00001000, B00001000, B00001000, B00001000, B00001000, B00001000, B00001000 };
-const byte MATRIX_UP_5[8] = { B00010000, B00010000, B00010000, B00010000, B00010000, B00010000, B00010000, B00010000 };
-const byte MATRIX_UP_6[8] = { B00100000, B00100000, B00100000, B00100000, B00100000, B00100000, B00100000, B00100000 };
-const byte MATRIX_UP_7[8] = { B01000000, B01000000, B01000000, B01000000, B01000000, B01000000, B01000000, B01000000 };
-const byte MATRIX_UP_8[8] = { B10000000, B10000000, B10000000, B10000000, B10000000, B10000000, B10000000, B10000000 };
-const byte MATRIX_LEFT[8] = { B00011000, B00011000, B00011000, B00011000, B11111111, B01111110, B00111100, B00011000 };
-const byte MATRIX_RIGHT[8] = { B00011000, B00111100, B01111110, B11111111, B00011000, B00011000, B00011000, B00011000 };
-const byte MATRIX_UP[8] = { B00001000, B00001100, B00001110, B11111111, B11111111, B00001110, B00001100, B00001000 };
-const byte MATRIX_DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
+struct MatrixPatterns {
+  const byte ALL_0[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
+  const byte LEFT_1[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111 };
+  const byte LEFT_2[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B00000000 };
+  const byte LEFT_3[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B00000000, B00000000 };
+  const byte LEFT_4[8] = { B00000000, B00000000, B00000000, B00000000, B11111111, B00000000, B00000000, B00000000 };
+  const byte LEFT_5[8] = { B00000000, B00000000, B00000000, B11111111, B00000000, B00000000, B00000000, B00000000 };
+  const byte LEFT_6[8] = { B00000000, B00000000, B11111111, B00000000, B00000000, B00000000, B00000000, B00000000 };
+  const byte LEFT_7[8] = { B00000000, B11111111, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
+  const byte LEFT_8[8] = { B11111111, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
+  const byte UP_1[8] = { B00000001, B00000001, B00000001, B00000001, B00000001, B00000001, B00000001, B00000001 };
+  const byte UP_2[8] = { B00000010, B00000010, B00000010, B00000010, B00000010, B00000010, B00000010, B00000010 };
+  const byte UP_3[8] = { B00000100, B00000100, B00000100, B00000100, B00000100, B00000100, B00000100, B00000100 };
+  const byte UP_4[8] = { B00001000, B00001000, B00001000, B00001000, B00001000, B00001000, B00001000, B00001000 };
+  const byte UP_5[8] = { B00010000, B00010000, B00010000, B00010000, B00010000, B00010000, B00010000, B00010000 };
+  const byte UP_6[8] = { B00100000, B00100000, B00100000, B00100000, B00100000, B00100000, B00100000, B00100000 };
+  const byte UP_7[8] = { B01000000, B01000000, B01000000, B01000000, B01000000, B01000000, B01000000, B01000000 };
+  const byte UP_8[8] = { B10000000, B10000000, B10000000, B10000000, B10000000, B10000000, B10000000, B10000000 };
+  const byte LEFT[8] = { B00011000, B00011000, B00011000, B00011000, B11111111, B01111110, B00111100, B00011000 };
+  const byte RIGHT[8] = { B00011000, B00111100, B01111110, B11111111, B00011000, B00011000, B00011000, B00011000 };
+  const byte UP[8] = { B00001000, B00001100, B00001110, B11111111, B11111111, B00001110, B00001100, B00001000 };
+  const byte DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
+} const mt;
 
 // 消灯用
 void matrix_reset() {
@@ -399,7 +390,7 @@ void matrix(const byte pattern[8], const unsigned long duration = 100) {
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
     // 1フレーム（8行分）を描画
-    for (int row = 0; row < 8; row++) {
+    for (byte row = 0; row < 8; row++) {
       // 残像防止のため、一旦非表示
       matrix_reset();
       // ラッチピンを下げて、データ送信を開始
@@ -420,37 +411,60 @@ void matrix(const byte pattern[8], const unsigned long duration = 100) {
 
 // 各線の列挙型
 enum Line : word { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
+
+struct BarPins {
+  byte pin;
+  word line;
+};
+
+const BarPins bar_pins[] = {
+  { LED_BAR_1_PIN, P1 },
+  { LED_BAR_2_PIN, P2 },
+  { LED_BAR_3_PIN, P3 },
+  { LED_BAR_4_PIN, P4 },
+  { LED_BAR_5_PIN, P5 },
+  { LED_BAR_6_PIN, P6 },
+  { LED_BAR_7_PIN, P7 },
+  { LED_BAR_8_PIN, P8 },
+  { LED_BAR_9_PIN, P9 },
+  { LED_BAR_10_PIN, P10 }
+};
+
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
+
 // 各色の列挙型
-enum Led { R = 0x1, G = 0x2, B = 0x4 };
+enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
+
+struct RgbPins {
+  byte pin;
+  byte color;
+};
+
+const RgbPins rgb_pins[] = {
+  { LED_RED_PIN, R },
+  { LED_GREEN_PIN, G },
+  { LED_BLUE_PIN, B }
+};
+
 // 白（ホワイト）
-const Led W = R | G | B;
+const Rgb W = R | G | B;
 // 水色（シアン）
-const Led C = G | B;
+const Rgb C = G | B;
 // 黄色（イエロー）
-const Led Y = R | G;
+const Rgb Y = R | G;
 // 紫（マゼンタ）
-const Led M = R | B;
+const Rgb M = R | B;
 // 消灯（ブラック）
-const Led K = 0;
+const Rgb K = 0;
 // 各色の格納変数
-const byte ledIndex[] = { R, G, B, W, C, Y, M, K };
+const byte rgbIndex[] = { R, G, B, W, C, Y, M, K };
 
 void bar(const word line, const byte color = 0) {
-  digitalWrite(LED_BAR_1_PIN, (line & P1) ? HIGH : LOW);
-  digitalWrite(LED_BAR_2_PIN, (line & P2) ? HIGH : LOW);
-  digitalWrite(LED_BAR_3_PIN, (line & P3) ? HIGH : LOW);
-  digitalWrite(LED_BAR_4_PIN, (line & P4) ? HIGH : LOW);
-  digitalWrite(LED_BAR_5_PIN, (line & P5) ? HIGH : LOW);
-  digitalWrite(LED_BAR_6_PIN, (line & P6) ? HIGH : LOW);
-  digitalWrite(LED_BAR_7_PIN, (line & P7) ? HIGH : LOW);
-  digitalWrite(LED_BAR_8_PIN, (line & P8) ? HIGH : LOW);
-  digitalWrite(LED_BAR_9_PIN, (line & P9) ? HIGH : LOW);
-  digitalWrite(LED_BAR_10_PIN, (line & P10) ? HIGH : LOW);
-  digitalWrite(LED_RED_PIN, (color & R) ? LOW : HIGH);
-  digitalWrite(LED_GREEN_PIN, (color & G) ? LOW : HIGH);
-  digitalWrite(LED_BLUE_PIN, (color & B) ? LOW : HIGH);
+  for (const auto& led : bar_pins)
+    digitalWrite(led.pin, (line & led.line));
+  for (const auto& rgb : rgb_pins)
+    digitalWrite(rgb.pin, !(color & rgb.color));
 }
 
 /********************
@@ -590,15 +604,10 @@ inline word getPot() {
   return analogRead(POTENTIOMETER_PIN);
 }
 
-// 1023 -> 9
-inline byte map_pot_value() {
-  return map(getPot(), 0, 1023, 0, 9);
-}
-
 // 可変抵抗器と7セグを同期
 void syncPot() {
-  // ７セグに表示
-  seg(num[map_pot_value()]);
+  // 1023 -> 9
+  seg(num[map(getPot(), 0, 1023, 0, 9)]);
 }
 
 /*******************
@@ -613,25 +622,25 @@ inline word getJoyY() {
   return analogRead(JOYSTICK_Y_PIN);
 }
 // 可動域最小値
-const int THRESHOLD_LOW  = 350;
+const word THRESHOLD_LOW  = 350;
 // 可動域最大値
-const int THRESHOLD_HIGH = 650;
+const word THRESHOLD_HIGH = 650;
 // LED マトリックスと向きを同期
 void syncArrow() {
   // X軸
-  int xValue = getJoyX();
+  word xValue = getJoyX();
   // Y軸
-  int yValue = getJoyY();
+  word yValue = getJoyY();
   if (yValue < THRESHOLD_LOW) {
-    matrix(MATRIX_UP);
+    matrix(mt.UP);
   } else if (yValue > THRESHOLD_HIGH) {
-    matrix(MATRIX_DOWN);
+    matrix(mt.DOWN);
   } else if (xValue > THRESHOLD_HIGH) {
-    matrix(MATRIX_RIGHT);
+    matrix(mt.RIGHT);
   } else if (xValue < THRESHOLD_LOW) {
-    matrix(MATRIX_LEFT);
+    matrix(mt.LEFT);
   } else {
-    matrix(MATRIX_0);
+    matrix(mt.ALL_0);
   }
 }
 
