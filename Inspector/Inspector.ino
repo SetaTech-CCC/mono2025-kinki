@@ -63,4 +63,6 @@ void loop() {
   if (isTactPressed(TR) && pos > SERVO_MIN) pos -= 8;
   // サーボ適用
   servo(pos);
+  // フォトインタラプタ遮蔽時にブザー低音鳴動
+  if (isPhotoEnabled()) buzz(LO, 0.1);
 }
