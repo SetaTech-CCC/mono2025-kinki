@@ -190,7 +190,7 @@ inline void delaySecs(const float secs_val) {
 const byte STEPPER_PINS[] = { STEPPER_MOTOR_1_PIN, STEPPER_MOTOR_2_PIN, STEPPER_MOTOR_3_PIN, STEPPER_MOTOR_4_PIN };
 
 // 1相励磁の駆動パターンを2次元配列で定義
-const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW,  LOW,  LOW  }, { LOW,  HIGH, LOW,  LOW  }, { LOW,  LOW,  HIGH, LOW  }, { LOW,  LOW,  LOW,  HIGH } };
+const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW, LOW, LOW }, { LOW, HIGH, LOW, LOW }, { LOW, LOW, HIGH, LOW }, { LOW, LOW, LOW, HIGH } };
 
 // ステッピングモーター制御関数
 void stepper(const boolean reverse = false) {
@@ -266,7 +266,7 @@ void buzz(const BuzzerTone level = LO, const float duration = 0.0f) {
  *****************/
 
 // Servo のライブラリで制御
-Servo srv;
+static Servo srv;
 // 可動域最小値
 const byte SERVO_MIN = 8;
 // 可動域最大値
