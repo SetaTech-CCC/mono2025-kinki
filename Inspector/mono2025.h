@@ -329,14 +329,14 @@ const Segment num[] = {
 };
 
 // アルファベット
-struct SegAlphabets {
+namespace sg {
   const Segment A = L1 | L2 | C1 | C2 | R1 | R2;
   const Segment B = L1 | L2 | C2 | C3 | R2;
   const Segment C = L2 | C2 | C3;
   const Segment D = L2 | C2 | C3 | R1 | R2;
   const Segment E = L1 | L2 | C1 | C2 | C3;
   const Segment F = L1 | L2 | C1 | C2;
-} const sg;
+}
 
 // セグメント実行
 void seg(const byte mask) {
@@ -352,7 +352,7 @@ void seg(const byte mask) {
  * LED マトリックス *
  *******************/
 
-struct MatrixPatterns {
+namespace mt {
   const byte ALL_0[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000 };
   const byte LEFT_1[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111 };
   const byte LEFT_2[8] = { B00000000, B00000000, B00000000, B00000000, B00000000, B00000000, B11111111, B00000000 };
@@ -374,7 +374,7 @@ struct MatrixPatterns {
   const byte RIGHT[8] = { B00011000, B00111100, B01111110, B11111111, B00011000, B00011000, B00011000, B00011000 };
   const byte UP[8] = { B00001000, B00001100, B00001110, B11111111, B11111111, B00001110, B00001100, B00001000 };
   const byte DOWN[8] = { B00010000, B00110000, B01110000, B11111111, B11111111, B01110000, B00110000, B00010000 };
-} const mt;
+}
 
 // 消灯用
 void matrix_reset() {
@@ -632,15 +632,15 @@ void syncArrow() {
   // Y軸
   word yValue = getJoyY();
   if (yValue < THRESHOLD_LOW) {
-    matrix(mt.UP);
+    matrix(mt::UP);
   } else if (yValue > THRESHOLD_HIGH) {
-    matrix(mt.DOWN);
+    matrix(mt::DOWN);
   } else if (xValue > THRESHOLD_HIGH) {
-    matrix(mt.RIGHT);
+    matrix(mt::RIGHT);
   } else if (xValue < THRESHOLD_LOW) {
-    matrix(mt.LEFT);
+    matrix(mt::LEFT);
   } else {
-    matrix(mt.ALL_0);
+    matrix(mt::ALL_0);
   }
 }
 
@@ -656,7 +656,7 @@ void setup() {
   // ボードレートを指定
   Serial.begin(9600);
   // 出力ピンの割り当て
-  for (byte i = 0; i < sizeof(PIN_WRITE) / sizeof(PIN_WRITE[0]); i++) pinMode(PIN_READ[i], OUTPUT);
+  for (byte i = 0; i < sizeof(PIN_WRITE) / sizeof(PIN_WRITE[0]); i++) pinMode(PIN_WRITE[i], OUTPUT);
   // 入力ピンの割り当て
   for (byte i = 0; i < sizeof(PIN_READ) / sizeof(PIN_READ[0]); i++) pinMode(PIN_READ[i], INPUT);
   // サーボの初期化
