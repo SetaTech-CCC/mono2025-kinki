@@ -64,5 +64,5 @@ void loop() {
   // サーボ適用
   servo(pos);
   // フォトインタラプタ遮蔽時にブザー低音鳴動
-  if (isPhotoEnabled()) buzz(LO, 0.2);
+  if (isPhotoEnabled()) buzz(LO, 0.3);
 }
