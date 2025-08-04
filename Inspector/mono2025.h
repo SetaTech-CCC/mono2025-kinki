@@ -46,14 +46,14 @@
  *   7セグ制御関数。
  *   以下は引数の例：
  *   番号：num[8] (0〜9)
- *   アルファベット：sg.A (ABCDEFのみ)
+ *   アルファベット：sg::A (ABCDEFのみ)
  *   特定のセグ：(L1 + R2 + C3) (L1,L2,C1,C2,C3,R1,R2,POINT)
  *   セグ右下の小数点は POINT を使用する。
  * 
  * ・matrix(pattern, duration)
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
- * 　mt.[UP, DOWN, LEFT, RIGHT], mt.[LEFT, UP]_[1-8]
+ * 　mt::[UP, DOWN, LEFT, RIGHT], mt::[LEFT, UP]_[1-8]
  * 　または、int[8] で自作のデザインを作る。
  * 　duration は表示する長さ。規定は 100ms。
  * 
@@ -300,16 +300,7 @@ enum Segment { L1 = 0x01, L2 = 0x02, C1 = 0x04, C2 = 0x08, C3 = 0x10, R1 = 0x20,
 
 struct SegPins { byte pin; Segment mask; };
 
-const SegPins seg_pins[] = {
-  { SEG_L1_PIN, L1 }, // 左上
-  { SEG_L2_PIN, L2 }, // 左下
-  { SEG_C1_PIN, C1 }, // 中央上
-  { SEG_C2_PIN, C2 }, // 中央真ん中
-  { SEG_C3_PIN, C3 }, // 中央下
-  { SEG_R1_PIN, R1 }, // 右上
-  { SEG_R2_PIN, R2 }, // 右下
-  { SEG_POINT_PIN, POINT } // 小数点
-};
+const SegPins seg_pins[] = { { SEG_L1_PIN, L1 }, { SEG_L2_PIN, L2 }, { SEG_C1_PIN, C1 }, { SEG_C2_PIN, C2 }, { SEG_C3_PIN, C3 }, { SEG_R1_PIN, R1 }, { SEG_R2_PIN, R2 }, { SEG_POINT_PIN, POINT } };
 
 // int で直接描写できるように数字のみの配列を用意
 const Segment num[] = {
@@ -419,16 +410,9 @@ const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 // 各色の列挙型
 enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
 
-struct RgbPins {
-  byte pin;
-  byte color;
-};
+struct RgbPins { byte pin; byte color; };
 
-const RgbPins rgb_pins[] = {
-  { LED_RED_PIN, R },
-  { LED_GREEN_PIN, G },
-  { LED_BLUE_PIN, B }
-};
+const RgbPins rgb_pins[] = { { LED_RED_PIN, R }, { LED_GREEN_PIN, G }, { LED_BLUE_PIN, B } };
 
 // 白（ホワイト）
 const Rgb W = R | G | B;
