@@ -298,10 +298,7 @@ void servo(const byte angle) {
 // 7セグ の列挙型
 enum Segment { L1 = 0x01, L2 = 0x02, C1 = 0x04, C2 = 0x08, C3 = 0x10, R1 = 0x20, R2 = 0x40, POINT = 0x80 };
 
-struct SegPins {
-  byte pin;
-  Segment mask;
-};
+struct SegPins { byte pin; Segment mask; };
 
 const SegPins seg_pins[] = {
   { SEG_L1_PIN, L1 }, // 左上
@@ -386,7 +383,7 @@ void matrix_reset() {
 
 // 点灯
 void matrix(const byte pattern[8], const unsigned long duration = 100) {
-  unsigned long startTime = millis();
+  const unsigned long startTime = millis();
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
     // 1フレーム（8行分）を描画
@@ -412,23 +409,9 @@ void matrix(const byte pattern[8], const unsigned long duration = 100) {
 // 各線の列挙型
 enum Line : word { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
 
-struct BarPins {
-  byte pin;
-  word line;
-};
+struct BarPins { byte pin; word line; };
 
-const BarPins bar_pins[] = {
-  { LED_BAR_1_PIN, P1 },
-  { LED_BAR_2_PIN, P2 },
-  { LED_BAR_3_PIN, P3 },
-  { LED_BAR_4_PIN, P4 },
-  { LED_BAR_5_PIN, P5 },
-  { LED_BAR_6_PIN, P6 },
-  { LED_BAR_7_PIN, P7 },
-  { LED_BAR_8_PIN, P8 },
-  { LED_BAR_9_PIN, P9 },
-  { LED_BAR_10_PIN, P10 }
-};
+const BarPins bar_pins[] = { { LED_BAR_1_PIN, P1 }, { LED_BAR_2_PIN, P2 }, { LED_BAR_3_PIN, P3 }, { LED_BAR_4_PIN, P4 }, { LED_BAR_5_PIN, P5 }, { LED_BAR_6_PIN, P6 }, { LED_BAR_7_PIN, P7 }, { LED_BAR_8_PIN, P8 }, { LED_BAR_9_PIN, P9 }, { LED_BAR_10_PIN, P10 } };
 
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
@@ -559,14 +542,7 @@ boolean isTogglePulled() {
 // タクトスイッチの左右を識別する列挙型
 enum TactSwitch { TL, TR, LL, LR, RL, RR };
 // タクトスイッチの全ピン（列挙型変数に対応）
-const byte TACT_PINS[] = {
-  TACT_TEST_LEFT_PIN,
-  TACT_TEST_RIGHT_PIN,
-  TACT_LEFT_LEFT_PIN,
-  TACT_LEFT_RIGHT_PIN,
-  TACT_RIGHT_LEFT_PIN,
-  TACT_RIGHT_RIGHT_PIN
-};
+const byte TACT_PINS[] = { TACT_TEST_LEFT_PIN, TACT_TEST_RIGHT_PIN, TACT_LEFT_LEFT_PIN, TACT_LEFT_RIGHT_PIN, TACT_RIGHT_LEFT_PIN, TACT_RIGHT_RIGHT_PIN };
 
 // 指定された側のタクトスイッチが押され続けている時は true
 boolean isTactEnabled(const TactSwitch side) {
@@ -621,10 +597,10 @@ inline word getJoyX() {
 inline word getJoyY() {
   return analogRead(JOYSTICK_Y_PIN);
 }
-// 可動域最小値
-const word THRESHOLD_LOW  = 350;
-// 可動域最大値
-const word THRESHOLD_HIGH = 650;
+// 可動域最小値 + 調整値(250)
+const word THRESHOLD_LOW  = 100 + 250;
+// 可動域最大値 - 調整値(250)
+const word THRESHOLD_HIGH = 900 - 250;
 // LED マトリックスと向きを同期
 void syncArrow() {
   // X軸
