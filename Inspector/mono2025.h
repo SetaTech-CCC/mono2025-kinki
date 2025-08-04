@@ -186,47 +186,34 @@ inline void delaySecs(const float secs_val) {
  * ステッピングモーター *
  **********************/
 
-// ステッピングモーター
+// ピン配列
+const byte STEPPER_PINS[] = { STEPPER_MOTOR_1_PIN, STEPPER_MOTOR_2_PIN, STEPPER_MOTOR_3_PIN, STEPPER_MOTOR_4_PIN };
+
+// 1相励磁の駆動パターンを2次元配列で定義
+const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW,  LOW,  LOW  }, { LOW,  HIGH, LOW,  LOW  }, { LOW,  LOW,  HIGH, LOW  }, { LOW,  LOW,  LOW,  HIGH } };
+
+// ステッピングモーター制御関数
 void stepper(const boolean reverse = false) {
-  // 回数フラグ
-  static byte stepper_flag = 0;
-  stepper_flag++;
+  // 現在のステップ位置を0から3のインデックスで管理
+  static byte step_index = 0;
 
-  switch (stepper_flag) {
+  // 逆回転フラグに基づいて、読み出すパターンのインデックスを決定
+  // 順回転 -> 0, 1, 2, 3
+  // 逆回転 -> 3, 2, 1, 0
+  byte current_pattern_index = reverse ? (3 - step_index) : step_index;
 
-    case 1:
-      digitalWrite(STEPPER_MOTOR_1_PIN, HIGH);
-      digitalWrite(STEPPER_MOTOR_2_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_4_PIN, LOW);
-      break;
-
-    case 2:
-      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_2_PIN, reverse ? LOW : HIGH);
-      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_4_PIN, reverse ? HIGH : LOW);
-      break;
-
-    case 3:
-      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_2_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_3_PIN, HIGH);
-      digitalWrite(STEPPER_MOTOR_4_PIN, LOW);
-      break;
-
-    case 4:
-      digitalWrite(STEPPER_MOTOR_1_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_2_PIN, reverse ? HIGH : LOW);
-      digitalWrite(STEPPER_MOTOR_3_PIN, LOW);
-      digitalWrite(STEPPER_MOTOR_4_PIN, reverse ? LOW : HIGH);
-      stepper_flag = 0;
-      break;
+  // ループを使って、定義したパターンを4つのピンに一括で書き込む
+  for (byte i = 0; i < 4; i++) {
+    digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[current_pattern_index][i]);
   }
+
+  // 次のステップのインデックスを計算
+  step_index = (step_index + 1) % 4;
+
   // 書き換え
   digitalWrite(MODE_PIN, LOW);
   digitalWrite(MODE_PIN, HIGH);
-  // セグを消灯
+  // 7セグを消灯
   digitalWrite(SEG_MODE_PIN, LOW);
 }
 
