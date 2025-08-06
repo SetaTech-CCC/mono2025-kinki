@@ -608,6 +608,10 @@ void setup() {
   for (byte i = 0; i < sizeof(PIN_READ) / sizeof(PIN_READ[0]); i++) pinMode(PIN_READ[i], INPUT);
   // サーボの初期化
   srv.attach(SERVO_PIN);
+  // DCモーターを停止
+  dc(S);
+  // LEDマトリックスを非表示
+  matrix(mt::ALL_0);
   // オプション関数
   start();
 }
