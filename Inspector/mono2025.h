@@ -18,7 +18,7 @@
  * ・secs()
  *   経過時間を秒単位で返す。小数第一位まで対応。
  * 
- * ・delaySecs(secs_val)
+ * ・delaySecs(time)
  *   秒単位で遅延させる。小数第一位まで対応。
  * 
  * ・stepper(reverse)
@@ -46,7 +46,7 @@
  *   7セグ制御関数。
  *   以下は引数の例：
  *   番号：num[8] (0〜9)
- *   アルファベット：sg::A (ABCDEFのみ)
+ *   アルファベット：sg::A (ABCDEFのみ) または num[10] (10〜15で16進数)
  *   特定のセグ：(L1 + R2 + C3) (L1,L2,C1,C2,C3,R1,R2,POINT)
  *   セグ右下の小数点は POINT を使用する。
  * 
@@ -174,8 +174,8 @@ inline float secs() {
 }
 
 // 秒単位で遅延
-inline void delaySecs(const float secs_val) {
-  delay((word) (secs_val * 1000.0f));
+inline void delaySecs(const float time) {
+  delay((word) (time * 1000.0f));
 }
 
 /***************
@@ -188,7 +188,6 @@ inline void delaySecs(const float secs_val) {
 
 // ピン配列
 const byte STEPPER_PINS[] = { STEPPER_MOTOR_1_PIN, STEPPER_MOTOR_2_PIN, STEPPER_MOTOR_3_PIN, STEPPER_MOTOR_4_PIN };
-
 // 1相励磁の駆動パターンを2次元配列で定義
 const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW, LOW, LOW }, { LOW, HIGH, LOW, LOW }, { LOW, LOW, HIGH, LOW }, { LOW, LOW, LOW, HIGH } };
 
@@ -198,14 +197,11 @@ void stepper(const boolean reverse = false) {
   static byte step_index = 0;
 
   // 逆回転フラグに基づいて、読み出すパターンのインデックスを決定
-  // 順回転 -> 0, 1, 2, 3
-  // 逆回転 -> 3, 2, 1, 0
   byte current_pattern_index = reverse ? (3 - step_index) : step_index;
 
   // ループを使って、定義したパターンを4つのピンに一括で書き込む
-  for (byte i = 0; i < 4; i++) {
+  for (byte i = 0; i < 4; i++)
     digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[current_pattern_index][i]);
-  }
 
   // 次のステップのインデックスを計算
   step_index = (step_index + 1) % 4;
@@ -392,21 +388,15 @@ void matrix(const byte pattern[8], const unsigned long duration = 100) {
 
 // 各線の列挙型
 enum Line : word { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
-
 struct BarPins { byte pin; word line; };
-
 const BarPins bar_pins[] = { { LED_BAR_1_PIN, P1 }, { LED_BAR_2_PIN, P2 }, { LED_BAR_3_PIN, P3 }, { LED_BAR_4_PIN, P4 }, { LED_BAR_5_PIN, P5 }, { LED_BAR_6_PIN, P6 }, { LED_BAR_7_PIN, P7 }, { LED_BAR_8_PIN, P8 }, { LED_BAR_9_PIN, P9 }, { LED_BAR_10_PIN, P10 } };
-
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 
 // 各色の列挙型
 enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
-
 struct RgbPins { byte pin; byte color; };
-
 const RgbPins rgb_pins[] = { { LED_RED_PIN, R }, { LED_GREEN_PIN, G }, { LED_BLUE_PIN, B } };
-
 // 白（ホワイト）
 const Rgb W = R | G | B;
 // 水色（シアン）
@@ -618,7 +608,7 @@ void setup() {
   // DCモーターを停止
   dc(S);
   // LEDマトリックスを非表示
-  matrix(mt::ALL_0);
+  matrix_reset();
   // オプション関数
   start();
 }
