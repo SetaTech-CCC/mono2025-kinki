@@ -195,17 +195,13 @@ const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW, LOW, LOW }, { LOW, HIGH, LOW,
 void stepper(const boolean reverse = false) {
   // 現在のステップ位置を0から3のインデックスで管理
   static byte step_index = 0;
-
   // 逆回転フラグに基づいて、読み出すパターンのインデックスを決定
   byte current_pattern_index = reverse ? (3 - step_index) : step_index;
-
-  // ループを使って、定義したパターンを4つのピンに一括で書き込む
+  // 定義したパターンを4つのピンに一括で書き込む
   for (byte i = 0; i < 4; i++)
     digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[current_pattern_index][i]);
-
   // 次のステップのインデックスを計算
   step_index = (step_index + 1) % 4;
-
   // 書き換え
   digitalWrite(MODE_PIN, LOW);
   digitalWrite(MODE_PIN, HIGH);
@@ -238,14 +234,12 @@ void dc(const DCMotor action = S) {
 
 // ブザーの音の種類を定義する列挙型
 enum BuzzerTone { LO, MI, HI };
-
 // 型と値を同期
 const word BUZZ_FREQ[] = {
   /* 低音 */ 400,
   /* 中音 */ 800,
   /* 高音 */ 1200
 };
-
 // ブザー鳴動制御
 void buzz(const BuzzerTone level = LO, const float duration = 0.0f) {
   if (duration > 0.0f) {
@@ -280,9 +274,7 @@ void servo(const byte angle = SERVO_MIN) {
 
 // 7セグ の列挙型
 enum Segment { L1 = 0x01, L2 = 0x02, C1 = 0x04, C2 = 0x08, C3 = 0x10, R1 = 0x20, R2 = 0x40, POINT = 0x80 };
-
 struct SegPins { byte pin; Segment mask; };
-
 const SegPins seg_pins[] = { { SEG_L1_PIN, L1 }, { SEG_L2_PIN, L2 }, { SEG_C1_PIN, C1 }, { SEG_C2_PIN, C2 }, { SEG_C3_PIN, C3 }, { SEG_R1_PIN, R1 }, { SEG_R2_PIN, R2 }, { SEG_POINT_PIN, POINT } };
 
 // int で直接描写できるように数字のみの配列を用意
@@ -373,9 +365,9 @@ void matrix(const byte pattern[8] = mt::ALL_0, const unsigned long duration = 10
       matrix_reset();
       // ラッチピンを下げて、データ送信を開始
       digitalWrite(RCLK_PIN, LOW);
-      // 列
+      // 列（右下から上へ）
       shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[row]);
-      // 行
+      // 行（右下から左へ）
       shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, 1 << row);
       // ラッチピンを上げて、シフトレジスタのデータに反映させる
       digitalWrite(RCLK_PIN, HIGH);
@@ -389,14 +381,14 @@ void matrix(const byte pattern[8] = mt::ALL_0, const unsigned long duration = 10
 
 // 各線の列挙型
 enum Line : word { P1 = 0x001, P2 = 0x002, P3 = 0x004, P4 = 0x008, P5 = 0x010, P6 = 0x020, P7 = 0x040, P8 = 0x080, P9 = 0x100, P10 = 0x200 };
-struct BarPins { byte pin; word line; };
+struct BarPins { byte pin; Line line; };
 const BarPins bar_pins[] = { { LED_BAR_1_PIN, P1 }, { LED_BAR_2_PIN, P2 }, { LED_BAR_3_PIN, P3 }, { LED_BAR_4_PIN, P4 }, { LED_BAR_5_PIN, P5 }, { LED_BAR_6_PIN, P6 }, { LED_BAR_7_PIN, P7 }, { LED_BAR_8_PIN, P8 }, { LED_BAR_9_PIN, P9 }, { LED_BAR_10_PIN, P10 } };
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
 
 // 各色の列挙型
 enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
-struct RgbPins { byte pin; byte color; };
+struct RgbPins { byte pin; Rgb color; };
 const RgbPins rgb_pins[] = { { LED_RED_PIN, R }, { LED_GREEN_PIN, G }, { LED_BLUE_PIN, B } };
 // 白（ホワイト）
 const Rgb W = R | G | B;
@@ -558,6 +550,7 @@ void syncPot() {
 /*******************
  * ジョイスティック *
  *******************/
+
 // X軸の値を取得
 inline word getJoyX() {
   return analogRead(JOYSTICK_X_PIN);
