@@ -1,6 +1,8 @@
 #include "mono2025.h"
 
 void start() {
+  // サーボモーターを初期位置に移動
+  servo(SERVO_MIN);
 }
 
 void loop() {
