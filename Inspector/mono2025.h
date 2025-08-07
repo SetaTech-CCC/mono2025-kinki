@@ -348,14 +348,14 @@ namespace mt {
 // 消灯用
 void matrix_reset() {
   digitalWrite(RCLK_PIN, LOW);
-  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 列
   shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 行
+  shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, B00000000); // 列
   digitalWrite(RCLK_PIN, HIGH);
 }
 
 // 点灯
 void matrix(const byte pattern[8] = mt::ALL_0) {
-  // 1フレーム（8行分）を描画
+  // 1フレーム（8列分）を描画
   for (byte column = 0; column < 8; column++) {
     // 残像防止のため、一旦非表示
     matrix_reset();
