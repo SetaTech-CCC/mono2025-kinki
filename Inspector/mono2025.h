@@ -221,7 +221,7 @@ void stepper(const boolean reverse = false) {
 enum DCMotor { LT, RT, S, F };
 
 // DC モーター制御
-void dc(const DCMotor action) {
+void dc(const DCMotor action = S) {
   // ２ピンを４パターンで制御
   digitalWrite(DC_MOTOR_1_PIN, (action == LT || action == S));
   digitalWrite(DC_MOTOR_2_PIN, (action == RT || action == S));
@@ -269,7 +269,7 @@ const byte SERVO_MIN = 8;
 const byte SERVO_MAX = 160;
 
 // サーボモーター制御関数
-void servo(const byte angle) {
+void servo(const byte angle = SERVO_MIN) {
   // 適用
   srv.write(constrain(angle, SERVO_MIN, SERVO_MAX));
 }
@@ -313,10 +313,11 @@ namespace sg {
   const Segment D = L2 | C2 | C3 | R1 | R2;
   const Segment E = L1 | L2 | C1 | C2 | C3;
   const Segment F = L1 | L2 | C1 | C2;
+  const Segment ALL_0 = 0;
 }
 
 // セグメント実行
-void seg(const byte mask) {
+void seg(const byte mask = sg::ALL_0) {
   for (byte i = 0; i < sizeof(seg_pins) / sizeof(seg_pins[0]); i++)
     digitalWrite(seg_pins[i].pin, (mask & seg_pins[i].mask));
   // セグを点灯
@@ -362,7 +363,7 @@ void matrix_reset() {
 }
 
 // 点灯
-void matrix(const byte pattern[8], const unsigned long duration = 100) {
+void matrix(const byte pattern[8] = mt::ALL_0, const unsigned long duration = 100) {
   const unsigned long startTime = millis();
   // 指定された時間(ms)、パターンを表示
   while (millis() - startTime < duration) {
@@ -411,7 +412,7 @@ const Rgb K = 0;
 const byte rgbIndex[] = { R, G, B, W, C, Y, M, K };
 
 // LEDバー制御関数
-void bar(const word line, const byte color = 0) {
+void bar(const word line = 0, const byte color = 0) {
   for (const auto& led : bar_pins)
     digitalWrite(led.pin, (line & led.line) ? HIGH : LOW);
   for (const auto& rgb : rgb_pins)
