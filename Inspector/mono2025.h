@@ -414,9 +414,10 @@ const Rgb K = 0;
 // 各色の格納変数
 const byte rgbIndex[] = { R, G, B, W, C, Y, M, K };
 
+// LEDバー制御関数
 void bar(const word line, const byte color = 0) {
   for (const auto& led : bar_pins)
-    digitalWrite(led.pin, (line & led.line));
+    digitalWrite(led.pin, (line & led.line) ? HIGH : LOW);
   for (const auto& rgb : rgb_pins)
     digitalWrite(rgb.pin, !(color & rgb.color));
 }
