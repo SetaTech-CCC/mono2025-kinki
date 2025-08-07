@@ -50,12 +50,11 @@
  *   特定のセグ：(L1 + R2 + C3) (L1,L2,C1,C2,C3,R1,R2,POINT)
  *   セグ右下の小数点は POINT を使用する。
  * 
- * ・matrix(pattern, duration)
+ * ・matrix(pattern)
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
  * 　mt::[UP, DOWN, LEFT, RIGHT], mt::[LEFT, UP]_[1-8]
  * 　または、byte[8] で自作のデザインを作る。
- * 　duration は表示する長さ。規定は 100ms。
  * 
  * ・bar(line, color)
  * 　10本LEDバー制御関数。
@@ -355,23 +354,19 @@ void matrix_reset() {
 }
 
 // 点灯
-void matrix(const byte pattern[8] = mt::ALL_0, const unsigned long duration = 100) {
-  const unsigned long startTime = millis();
-  // 指定された時間(ms)、パターンを表示
-  while (millis() - startTime < duration) {
-    // 1フレーム（8行分）を描画
-    for (byte row = 0; row < 8; row++) {
-      // 残像防止のため、一旦非表示
-      matrix_reset();
-      // ラッチピンを下げて、データ送信を開始
-      digitalWrite(RCLK_PIN, LOW);
-      // 列（右下から上へ）
-      shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[row]);
-      // 行（右下から左へ）
-      shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, 1 << row);
-      // ラッチピンを上げて、シフトレジスタのデータに反映させる
-      digitalWrite(RCLK_PIN, HIGH);
-    }
+void matrix(const byte pattern[8] = mt::ALL_0) {
+  // 1フレーム（8行分）を描画
+  for (byte column = 0; column < 8; column++) {
+    // 残像防止のため、一旦非表示
+    matrix_reset();
+    // ラッチピンを下げて、データ送信を開始
+    digitalWrite(RCLK_PIN, LOW);
+    // 行・Row（右下から上へ）
+    shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[column]);
+    // 列・Column（右下から左へ）
+    shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, 1 << column);
+    // ラッチピンを上げて、シフトレジスタのデータに反映させる
+    digitalWrite(RCLK_PIN, HIGH);
   }
 }
 
