@@ -128,14 +128,14 @@ const byte BUZZER_PIN = 27;
 const byte MODE_PIN = 29;
 // 7セグ
 const byte SEG_MODE_PIN = 28;
-const byte SEG_L1_PIN = 32;
-const byte SEG_L2_PIN = 33;
+const byte SEG_L1_PIN = STEPPER_MOTOR_1_PIN;
+const byte SEG_L2_PIN = STEPPER_MOTOR_2_PIN;
 const byte SEG_C1_PIN = 37;
-const byte SEG_C2_PIN = 31;
-const byte SEG_C3_PIN = 34;
+const byte SEG_C2_PIN = DC_MOTOR_2_PIN;
+const byte SEG_C3_PIN = STEPPER_MOTOR_3_PIN;
 const byte SEG_R1_PIN = 36;
-const byte SEG_R2_PIN = 35;
-const byte SEG_POINT_PIN = 30;
+const byte SEG_R2_PIN = STEPPER_MOTOR_4_PIN;
+const byte SEG_POINT_PIN = DC_MOTOR_1_PIN;
 // サーボモーター
 const byte SERVO_PIN = 41;
 // LED マトリックス
