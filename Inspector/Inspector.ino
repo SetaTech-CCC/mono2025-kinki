@@ -12,6 +12,8 @@ void loop() {
   static byte bar_color = 0;
   // サーボモーターの角度
   static byte pos = SERVO_MIN;
+  // サーボの１ステップ
+  const byte SERVO_STEP = 8;
   // トグルが下向きの時
   if (!isToggleEnabled()) {
     // DCモーターをストップ
@@ -56,9 +58,9 @@ void loop() {
   // LEDマトリックスとジョイスティックを同期
   syncArrow();
   // サーボ角度増加（大会基盤上の左側のタクトが押された時）
-  if (isTactPressed(TL) && pos < SERVO_MAX) pos += 8;
+  if (isTactPressed(TL) && pos < SERVO_MAX) pos += SERVO_STEP;
   // サーボ角度減少（大会基盤上の右側のタクトが押された時）
-  if (isTactPressed(TR) && pos > SERVO_MIN) pos -= 8;
+  if (isTactPressed(TR) && pos > SERVO_MIN) pos -= SERVO_STEP;
   // サーボ適用
   servo(pos);
   // フォトインタラプタ遮蔽時にブザー低音鳴動
