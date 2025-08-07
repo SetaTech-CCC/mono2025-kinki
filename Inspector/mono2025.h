@@ -177,6 +177,16 @@ inline void delaySecs(const float time) {
   delay((word) (time * 1000.0f));
 }
 
+// モーター処理切り替え
+inline void mode(const boolean seg = false) {
+  // 書換準備 (セグは常時確定)
+  digitalWrite(MODE_PIN, LOW);
+  // 適用 (モーターのみ)
+  if (!seg) digitalWrite(MODE_PIN, HIGH);
+  // セグを点消灯
+  digitalWrite(SEG_MODE_PIN, seg);
+}
+
 /***************
  * 処理ここから *
  ***************/
@@ -199,11 +209,8 @@ void stepper(const boolean reverse = false) {
     digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[reverse ? (3 - step_index) : step_index][i]);
   // 次のステップのインデックスを計算
   step_index = (step_index + 1) % 4;
-  // 書き換え
-  digitalWrite(MODE_PIN, LOW);
-  digitalWrite(MODE_PIN, HIGH);
-  // 7セグを消灯
-  digitalWrite(SEG_MODE_PIN, LOW);
+  // モーター処理切り替え
+  mode();
 }
 
 /*************
@@ -218,11 +225,8 @@ void dc(const DCMotor action = S) {
   // ２ピンを４パターンで制御
   digitalWrite(DC_MOTOR_1_PIN, (action == LT || action == S));
   digitalWrite(DC_MOTOR_2_PIN, (action == RT || action == S));
-  // 書き換え
-  digitalWrite(MODE_PIN, LOW);
-  digitalWrite(MODE_PIN, HIGH);
-  // セグを消灯
-  digitalWrite(SEG_MODE_PIN, LOW);
+  // モーター処理切り替え
+  mode();
 }
 
 /**********
@@ -309,10 +313,8 @@ namespace sg {
 void seg(const byte mask = sg::ALL_0) {
   for (byte i = 0; i < sizeof(seg_pins) / sizeof(seg_pins[0]); i++)
     digitalWrite(seg_pins[i].pin, (mask & seg_pins[i].mask));
-  // セグを点灯
-  digitalWrite(SEG_MODE_PIN, HIGH);
-  // 送信
-  digitalWrite(MODE_PIN, LOW);
+  // モーター処理切り替え
+  mode(true);
 }
 
 /*******************
