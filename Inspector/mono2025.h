@@ -194,11 +194,9 @@ const byte STEPPER_PATTERNS[4][4] = { { HIGH, LOW, LOW, LOW }, { LOW, HIGH, LOW,
 void stepper(const boolean reverse = false) {
   // 現在のステップ位置を0から3のインデックスで管理
   static byte step_index = 0;
-  // 逆回転フラグに基づいて、読み出すパターンのインデックスを決定
-  byte current_pattern_index = reverse ? (3 - step_index) : step_index;
   // 定義したパターンを4つのピンに一括で書き込む
   for (byte i = 0; i < 4; i++)
-    digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[current_pattern_index][i]);
+    digitalWrite(STEPPER_PINS[i], STEPPER_PATTERNS[reverse ? (3 - step_index) : step_index][i]);
   // 次のステップのインデックスを計算
   step_index = (step_index + 1) % 4;
   // 書き換え
