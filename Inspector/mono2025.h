@@ -554,10 +554,12 @@ inline word getJoyX() {
 inline word getJoyY() {
   return analogRead(JOYSTICK_Y_PIN);
 }
-// 可動域最小値 + 調整値(250)
-const word THRESHOLD_LOW  = 100 + 250;
-// 可動域最大値 - 調整値(250)
-const word THRESHOLD_HIGH = 900 - 250;
+// 調整値
+const word JOYSTICK_DEAD_ZONE = 250;
+// 可動域最小値 + 調整値
+const word THRESHOLD_LOW  = 100 + JOYSTICK_DEAD_ZONE;
+// 可動域最大値 - 調整値
+const word THRESHOLD_HIGH = 900 - JOYSTICK_DEAD_ZONE;
 // LED マトリックスと向きを同期
 void syncArrow() {
   // X軸
