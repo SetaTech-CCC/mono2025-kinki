@@ -58,7 +58,7 @@
  * 　duration は表示する長さ。規定は 100ms。
  * 
  * ・bar(line, color)
- * 　10色LEDバー制御関数。
+ * 　10本LEDバー制御関数。
  * 　line には、P[1-10] を入れる。
  * 　(P1 | P6) の様に足し算も可能。
  * 　color は、R,G,B,W,C,Y,M,K を入れる。
