@@ -7,9 +7,9 @@ void start() {
 
 void loop() {
   // LEDバーの位置 (列挙型変数要参照)
-  static byte bar_gage = 0;
+  static byte bar_gage = 1;
   // LEDバーの色 (列挙型変数要参照)
-  static byte bar_color = 0;
+  static byte bar_color = 1;
   // サーボモーターの角度
   static byte pos = SERVO_MIN;
   // サーボの１ステップ
