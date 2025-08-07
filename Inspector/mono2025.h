@@ -54,7 +54,7 @@
  * 　LEDマトリックス制御関数。
  * 　pattern に次の定数を入れる
  * 　mt::[UP, DOWN, LEFT, RIGHT], mt::[LEFT, UP]_[1-8]
- * 　または、int[8] で自作のデザインを作る。
+ * 　または、byte[8] で自作のデザインを作る。
  * 　duration は表示する長さ。規定は 100ms。
  * 
  * ・bar(line, color)
