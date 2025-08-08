@@ -508,7 +508,7 @@ boolean isTactEnabled(const TactSwitch side) {
 // 指定された側のタクトスイッチが１回押された時に true
 boolean isTactPressed(const TactSwitch side) {
   // スイッチの状態保持用
-  static boolean tact_pressed_state[6] = { true, true, true, true, true, true };
+  static boolean tact_pressed_state[6] = { false, false, false, false, false, false };
   // チャタリング防止
   delayMicroseconds(CHATTER_DEBOUNCE_US);
   boolean currently_enabled = isTactEnabled(side);
