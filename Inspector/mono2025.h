@@ -467,14 +467,14 @@ inline boolean isToggleEnabled() {
   return digitalRead(TOGGLE_PIN) == HIGH;
 }
 
-// タクト・トグルチャタリング防止遅延 (ミリ秒)
-const byte CHATTER_DEBOUNCE_MS = 6;
+// タクト・トグルチャタリング防止遅延 (マイクロ秒)
+const byte CHATTER_DEBOUNCE_US = 120;
 // トグルスイッチが上げられた時に true
 boolean isTogglePulled() {
   // トグルの状態保持用
   static boolean toggle = true;
   // チャタリング防止
-  delay(CHATTER_DEBOUNCE_MS);
+  delayMicroseconds(CHATTER_DEBOUNCE_US);
   boolean currently_enabled = isToggleEnabled();
   // トグルの状態を参照し更新
   if (currently_enabled && toggle) {
@@ -510,7 +510,7 @@ boolean isTactPressed(const TactSwitch side) {
   // スイッチの状態保持用
   static boolean tact_pressed_state[6] = { false, false, false, false, false, false };
   // チャタリング防止
-  delay(CHATTER_DEBOUNCE_MS);
+  delayMicroseconds(CHATTER_DEBOUNCE_US);
   boolean currently_enabled = isTactEnabled(side);
   // 指定されたスイッチの状態を参照し更新
   if (currently_enabled && tact_pressed_state[side]) {
