@@ -505,7 +505,7 @@ boolean isTactEnabled(const TactSwitch side) {
 // 指定された側のタクトスイッチが１回押された時に true
 boolean isTactPressed(const TactSwitch side) {
   // スイッチの状態保持用
-  static boolean tact_pressed_state[6] = { false, false, false, false, false, false };
+  static boolean tact_pressed_state[6] = { LOW, LOW, LOW, LOW, LOW, LOW };
   boolean currently_enabled = isTactEnabled(side);
   // 指定されたスイッチの状態を参照し更新
   if (currently_enabled && tact_pressed_state[side]) {
