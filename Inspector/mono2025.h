@@ -57,7 +57,7 @@
  * 　または、byte[8] で自作のデザインを作る。
  * 
  * ・bar(line, color)
- * 　10本LEDバー制御関数。
+ * 　LEDバー制御関数。
  * 　line には、P[1-10] を入れる。
  * 　(P1 | P6) の様に足し算も可能。
  * 　color は、R,G,B,W,C,Y,M,K を入れる。
@@ -107,7 +107,7 @@ const byte STEPPER_MOTOR_4_PIN = 35;
 // DCモーター
 const byte DC_MOTOR_1_PIN = 30;
 const byte DC_MOTOR_2_PIN = 31;
-// 10色LEDバー
+// LEDバー
 const byte LED_RED_PIN = 7;
 const byte LED_GREEN_PIN = 8;
 const byte LED_BLUE_PIN = 9;
