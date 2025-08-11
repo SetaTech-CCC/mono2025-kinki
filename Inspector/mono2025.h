@@ -27,10 +27,11 @@
  *   引数なしでは時計回りに動く。
  *   引数の reverse を true にすると、反時計回りに動く。
  * 
- * ・dc(action)
+ * ・dc(action, slow)
  *   DCモーターを制御する。
- *   引数には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
- *   引数の文字にダブルクォーテーションは不要。
+ *   action には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
+ *   aciton の文字にダブルクォーテーションは不要。
+ *   slow に true を入れると、速度が半減する。
  * 
  * ・buzz(level, duration)
  *   ブザー鳴動関数。
