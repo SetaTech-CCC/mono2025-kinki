@@ -517,7 +517,7 @@ boolean isTactPressed(const TactSwitch side) {
   // 時間比較用
   static unsigned long last_debounce_time[6] = { 0, 0, 0, 0, 0, 0 };
   // 回避する時間
-  const byte debounce_delay = 200;
+  const byte debounce_delay = 50;
   // スイッチの状態を取得
   boolean currently_enabled = isTactEnabled(side);
   // デバウンス処理
