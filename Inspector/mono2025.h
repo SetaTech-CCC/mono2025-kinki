@@ -95,6 +95,8 @@
 
 #include <Servo.h> // lib/Servo
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+
 /***********
  * 制御ピン *
  ***********/
@@ -311,7 +313,7 @@ namespace sg {
 
 // セグメント実行
 void seg(const byte mask = sg::ALL_0) {
-  for (byte i = 0; i < sizeof(seg_pins) / sizeof(seg_pins[0]); i++)
+  for (byte i = 0; i < ARRAY_SIZE(seg_pins); i++)
     digitalWrite(seg_pins[i].pin, (mask & seg_pins[i].mask));
   // モーター処理切り替え
   mode(true);
@@ -599,9 +601,9 @@ void setup() {
   // ボードレートを指定
   Serial.begin(9600);
   // 出力ピンの割り当て
-  for (byte i = 0; i < sizeof(PIN_WRITE) / sizeof(PIN_WRITE[0]); i++) pinMode(PIN_WRITE[i], OUTPUT);
+  for (byte i = 0; i < ARRAY_SIZE(PIN_WRITE); i++) pinMode(PIN_WRITE[i], OUTPUT);
   // 入力ピンの割り当て
-  for (byte i = 0; i < sizeof(PIN_READ) / sizeof(PIN_READ[0]); i++) pinMode(PIN_READ[i], INPUT);
+  for (byte i = 0; i < ARRAY_SIZE(PIN_READ); i++) pinMode(PIN_READ[i], INPUT);
   // サーボの初期化
   srv.attach(SERVO_PIN);
   // DCモーターを停止
