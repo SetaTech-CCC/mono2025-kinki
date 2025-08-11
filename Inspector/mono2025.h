@@ -37,6 +37,7 @@
  *   ブザー鳴動関数。
  *   level は周波数で、HI(高音)、MI(中音)、LO(低音)がある。
  *   これらにダブルクォーテーションは不要。
+ +   特定の周波数を数値で直接入れることも可能。
  *   音の長さは２つ目の引数である duration に秒数で入れる。小数第一位まで対応。
  * 
  * ・servo(angle)
@@ -247,10 +248,10 @@ const word BUZZ_FREQ[] = {
   /* 高音 */ 1200
 };
 // ブザー鳴動制御
-void buzz(const BuzzerTone level = LO, const float duration = 0.0f) {
+void buzz(const word level = LO, const float duration = 0.0f) {
   if (duration > 0.0f) {
     // 鳴動
-    tone(BUZZER_PIN, BUZZ_FREQ[level], (word) (duration * 1000.0f));
+    tone(BUZZER_PIN, level > 2 ? level : BUZZ_FREQ[level], (unsigned long) (duration * 1000.0f));
   } else {
     // 消音
     noTone(BUZZER_PIN);
