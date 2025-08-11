@@ -176,7 +176,7 @@ inline float secs() {
 
 // 秒単位で遅延
 inline void delaySecs(const float time) {
-  delay((word) (time * 1000.0f));
+  delay((unsigned long) (time * 1000.0f));
 }
 
 // モーター処理切り替え
