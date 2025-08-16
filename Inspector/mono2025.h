@@ -61,7 +61,8 @@
  * ・bar(line, color)
  * 　LEDバー制御関数。
  * 　line には、P[1-10] を入れる。
- * 　(P1 | P6) の様に足し算も可能。
+ * 　(P1 + P6) の様に足し算も可能。
+ *   lineIndex[] で上から下に加算、lineBottomIndex[] で下から上に加算。
  * 　color は、R,G,B,W,C,Y,M,K を入れる。
  * 
  * ・isPhotoEnabled()
@@ -386,6 +387,8 @@ struct BarPins { byte pin; Line line; };
 const BarPins bar_pins[] = { { LED_BAR_1_PIN, P1 }, { LED_BAR_2_PIN, P2 }, { LED_BAR_3_PIN, P3 }, { LED_BAR_4_PIN, P4 }, { LED_BAR_5_PIN, P5 }, { LED_BAR_6_PIN, P6 }, { LED_BAR_7_PIN, P7 }, { LED_BAR_8_PIN, P8 }, { LED_BAR_9_PIN, P9 }, { LED_BAR_10_PIN, P10 } };
 // 各色の格納変数
 const Line lineIndex[] = { P1, P2, P3, P4, P5, P6, P7, P8, P9, P10 };
+// 下から上
+const Line lineBottomIndex[] = { P10, P9, P8, P7, P6, P5, P4, P3, P2, P1 };
 
 // 各色の列挙型
 enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
