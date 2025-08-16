@@ -367,9 +367,9 @@ void matrix(const byte pattern[8] = mt::ALL_0) {
     matrix_reset();
     // ラッチピンを下げて、データ送信を開始
     digitalWrite(RCLK_PIN, LOW);
-    // 行・Row（右下から上へ）
+    // 行・Row（下から上へ）
     shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, pattern[column]);
-    // 列・Column（右下から左へ）
+    // 列・Column（右から左へ）
     shiftOut(SER_PIN, SRCLK_PIN, MSBFIRST, 1 << column);
     // ラッチピンを上げて、シフトレジスタのデータに反映させる
     digitalWrite(RCLK_PIN, HIGH);
