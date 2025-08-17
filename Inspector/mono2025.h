@@ -27,11 +27,10 @@
  *   引数なしでは時計回りに動く。
  *   引数の reverse を true にすると、反時計回りに動く。
  * 
- * ・dc(action, slow)
+ * ・dc(action)
  *   DCモーターを制御する。
  *   action には、RT(Right Turn：右回り)、LT(Left Turn：左回り)、S(Stop：即停止)、F(Free：減速)がある。
  *   aciton の文字にダブルクォーテーションは不要。
- *   slow に true を入れると、速度が半減する。
  * 
  * ・buzz(level, duration)
  *   ブザー鳴動関数。
@@ -226,12 +225,10 @@ void stepper(const boolean reverse = false) {
 enum DCMotor { LT, RT, S, F };
 
 // DC モーター制御
-void dc(const DCMotor action = S, const boolean slow = false) {
-  // スピードを確定
-  const byte speed = slow ? 127 : 255;
+void dc(const DCMotor action = S) {
   // ２ピンを４パターンで制御
-  analogWrite(DC_MOTOR_1_PIN, (action == LT || action == S) ? speed : 0);
-  analogWrite(DC_MOTOR_2_PIN, (action == RT || action == S) ? speed : 0);
+  digitalWrite(DC_MOTOR_1_PIN, (action == LT || action == S));
+  digitalWrite(DC_MOTOR_2_PIN, (action == RT || action == S));
   // モーター処理切り替え
   mode();
 }
