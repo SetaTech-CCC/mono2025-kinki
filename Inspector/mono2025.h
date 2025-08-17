@@ -513,30 +513,17 @@ boolean isTactEnabled(const TactSwitch side) {
 
 // 指定された側のタクトスイッチが１回押された時に true
 boolean isTactPressed(const TactSwitch side) {
-  // 押せるかどうか(チャタリング回避)
-  static boolean can_press[6] = { true, true, true, true, true, true };
   // スイッチの状態保持用
   static boolean tact_pressed_state[6] = { LOW, LOW, LOW, LOW, LOW, LOW };
-  // 時間比較用
-  static unsigned long last_debounce_time[6] = { 0, 0, 0, 0, 0, 0 };
-  // 回避する時間
-  const byte debounce_delay = 50;
-  // スイッチの状態を取得
   boolean currently_enabled = isTactEnabled(side);
-  // デバウンス処理
-  if (currently_enabled != tact_pressed_state[side]) last_debounce_time[side] = millis();
-  // チャタリング回避
-  if ((millis() - last_debounce_time[side]) < debounce_delay) return false;
-  // タクトの状態を更新
-  tact_pressed_state[side] = currently_enabled;
   // 指定されたスイッチの状態を参照し更新
-  if (can_press[side] && tact_pressed_state[side]) {
+  if (currently_enabled && tact_pressed_state[side]) {
     // 押されたので状態を更新
-    can_press[side] = false;
+    tact_pressed_state[side] = false;
     return true;
-  } else if (!tact_pressed_state[side]) {
+  } else if (!currently_enabled) {
     // 離されたので状態をリセット
-    can_press[side] = true;
+    tact_pressed_state[side] = true;
     return false;
   } else {
     // 押され続けているが無視
