@@ -103,67 +103,68 @@
  * 制御ピン *
  ***********/
 
-// ステッピングモーター
-const byte STEPPER_MOTOR_1_PIN = 32;
-const byte STEPPER_MOTOR_2_PIN = 33;
-const byte STEPPER_MOTOR_3_PIN = 34;
-const byte STEPPER_MOTOR_4_PIN = 35;
-// DCモーター
-const byte DC_MOTOR_1_PIN = 30;
-const byte DC_MOTOR_2_PIN = 31;
 // LEDバー
-const byte LED_RED_PIN = 7;
-const byte LED_GREEN_PIN = 8;
-const byte LED_BLUE_PIN = 9;
-const byte LED_BAR_1_PIN = 22;
-const byte LED_BAR_2_PIN = 23;
-const byte LED_BAR_3_PIN = 24;
-const byte LED_BAR_4_PIN = 25;
-const byte LED_BAR_5_PIN = 26;
-const byte LED_BAR_6_PIN = 2;
-const byte LED_BAR_7_PIN = 3;
-const byte LED_BAR_8_PIN = 4;
-const byte LED_BAR_9_PIN = 5;
-const byte LED_BAR_10_PIN = 6;
+const byte LED_BAR_1_PIN = 22; // CN1-2
+const byte LED_BAR_2_PIN = 23; // CN1-3
+const byte LED_BAR_3_PIN = 24; // CN1-4
+const byte LED_BAR_4_PIN = 25; // CN1-5
+const byte LED_BAR_5_PIN = 26; // CN1-6
 // ブザー
-const byte BUZZER_PIN = 27;
+const byte BUZZER_PIN = 27; // CN1-7
 // モード切替
-const byte MODE_PIN = 29;
+const byte SEG_MODE_PIN = 28; // CN1-8
+const byte MODE_PIN = 29; // CN1-9
+// DCモーター
+const byte DC_MOTOR_1_PIN = 30; // CN2-2 to CN5-2
+const byte DC_MOTOR_2_PIN = 31; // CN2-3 to CN5-1
+// ステッピングモーター
+const byte STEPPER_MOTOR_1_PIN = 32; // CN2-4 to CN6-6
+const byte STEPPER_MOTOR_2_PIN = 33; // CN2-5 to CN6-5
+const byte STEPPER_MOTOR_3_PIN = 34; // CN2-6 to CN6-4
+const byte STEPPER_MOTOR_4_PIN = 35; // CN2-7 to CN6-3
 // 7セグ
-const byte SEG_MODE_PIN = 28;
-const byte SEG_L1_PIN = STEPPER_MOTOR_1_PIN;
-const byte SEG_L2_PIN = STEPPER_MOTOR_2_PIN;
-const byte SEG_C1_PIN = 37;
-const byte SEG_C2_PIN = DC_MOTOR_2_PIN;
-const byte SEG_C3_PIN = STEPPER_MOTOR_3_PIN;
-const byte SEG_R1_PIN = 36;
-const byte SEG_R2_PIN = STEPPER_MOTOR_4_PIN;
-const byte SEG_POINT_PIN = DC_MOTOR_1_PIN;
-// サーボモーター
-const byte SERVO_PIN = 41;
+const byte SEG_L1_PIN = STEPPER_MOTOR_1_PIN; // CN2-4
+const byte SEG_L2_PIN = STEPPER_MOTOR_2_PIN; // CN2-5
+const byte SEG_C1_PIN = 37; // CN2-9
+const byte SEG_C2_PIN = DC_MOTOR_2_PIN; // CN2-3
+const byte SEG_C3_PIN = STEPPER_MOTOR_3_PIN; // CN2-6
+const byte SEG_R1_PIN = 36; // CN2-8
+const byte SEG_R2_PIN = STEPPER_MOTOR_4_PIN; // CN2-7
+const byte SEG_POINT_PIN = DC_MOTOR_1_PIN; // CN2-2
 // LED マトリックス
-const byte SER_PIN = 38; // シリアル入力
-const byte SRCLK_PIN = 39; // シフトクロック
-const byte RCLK_PIN = 40; // ラッチクロック
+const byte SER_PIN = 38; // CN3-2 (シリアル入力)
+const byte SRCLK_PIN = 39; // CN3-3 (シフトクロック)
+const byte RCLK_PIN = 40; // CN3-4 (ラッチクロック)
+// サーボモーター
+const byte SERVO_PIN = 41; // CN3-5 to CN7-3
+// LEDバー
+const byte LED_BAR_6_PIN = 2; // CN4-2
+const byte LED_BAR_7_PIN = 3; // CN4-3
+const byte LED_BAR_8_PIN = 4; // CN4-4
+const byte LED_BAR_9_PIN = 5; // CN4-5
+const byte LED_BAR_10_PIN = 6; // CN4-6
+const byte LED_RED_PIN = 7; // CN9-1
+const byte LED_GREEN_PIN = 8; // CN9-3
+const byte LED_BLUE_PIN = 9; // CN9-2
 // 書き込みピン
 const byte PIN_WRITE[] = { LED_RED_PIN, LED_GREEN_PIN, LED_BLUE_PIN, LED_BAR_1_PIN, LED_BAR_2_PIN, LED_BAR_3_PIN, LED_BAR_4_PIN, LED_BAR_5_PIN, LED_BAR_6_PIN, LED_BAR_7_PIN, LED_BAR_8_PIN, LED_BAR_9_PIN, LED_BAR_10_PIN, BUZZER_PIN, MODE_PIN, SEG_MODE_PIN, SEG_L1_PIN, SEG_L2_PIN, SEG_C1_PIN, SEG_C2_PIN, SEG_C3_PIN, SEG_R1_PIN, SEG_R2_PIN, SEG_POINT_PIN, SER_PIN, SRCLK_PIN, RCLK_PIN };
 
 // フォトインタラプタ
-const byte PHOTO_INTERRUPTER_PIN = 42;
+const byte PHOTO_INTERRUPTER_PIN = 42; // CN3-6
 // 可変抵抗器
-const byte POTENTIOMETER_PIN = A15;
+const byte POTENTIOMETER_PIN = A15; // CN3-7
 // タクトスイッチ
-const byte TACT_TEST_LEFT_PIN = 44;
-const byte TACT_TEST_RIGHT_PIN = 45;
-const byte TACT_LEFT_LEFT_PIN = 48;
-const byte TACT_LEFT_RIGHT_PIN = 49;
-const byte TACT_RIGHT_LEFT_PIN = 50;
-const byte TACT_RIGHT_RIGHT_PIN = 51;
+const byte TACT_TEST_LEFT_PIN = 44; // CN3-8
+const byte TACT_TEST_RIGHT_PIN = 45; // CN3-9
+const byte TACT_LEFT_LEFT_PIN = 48; // A-3 or A-2
+const byte TACT_LEFT_RIGHT_PIN = 49; // A-4 or A-3
+const byte TACT_RIGHT_LEFT_PIN = 50; // A-5 or A-4
+const byte TACT_RIGHT_RIGHT_PIN = 51; // A-6 or A-5
 // トグルスイッチ
-const byte TOGGLE_PIN = 52;
+const byte TOGGLE_PIN = 52; // A-2 or A-6
 // ジョイスティック
-const byte JOYSTICK_X_PIN = A1;
-const byte JOYSTICK_Y_PIN = A2;
+const byte JOYSTICK_X_PIN = A1; // A-7
+const byte JOYSTICK_Y_PIN = A2; // A-8
 // 読み込みピン
 const byte PIN_READ[] = { PHOTO_INTERRUPTER_PIN, TOGGLE_PIN, TACT_TEST_LEFT_PIN, TACT_TEST_RIGHT_PIN, TACT_LEFT_LEFT_PIN, TACT_LEFT_RIGHT_PIN, TACT_RIGHT_LEFT_PIN, TACT_RIGHT_RIGHT_PIN, POTENTIOMETER_PIN, JOYSTICK_X_PIN, JOYSTICK_Y_PIN };
 
