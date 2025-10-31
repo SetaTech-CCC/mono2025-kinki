@@ -285,33 +285,33 @@ const SegPins seg_pins[] = { { SEG_L1_PIN, L1 }, { SEG_L2_PIN, L2 }, { SEG_C1_PI
 
 // int で直接描写できるように数字のみの配列を用意
 const Segment num[] = {
-  /* 0 */ L1 | L2 | C1 | C3 | R1 | R2,
-  /* 1 */ R1 | R2,
-  /* 2 */ L2 | C1 | C2 | C3 | R1,
-  /* 3 */ C1 | C2 | C3 | R1 | R2,
-  /* 4 */ L1 | C2 | R1 | R2,
-  /* 5 */ L1 | C1 | C2 | C3 | R2,
-  /* 6 */ L1 | L2 | C1 | C2 | C3 | R2,
-  /* 7 */ L1 | C1 | R1 | R2,
-  /* 8 */ L1 | L2 | C1 | C2 | C3 | R1 | R2,
-  /* 9 */ L1 | C1 | C2 | C3 | R1 | R2,
-  /* A */ L1 | L2 | C1 | C2 | R1 | R2,
-  /* b */ L1 | L2 | C2 | C3 | R2,
-  /* c */ L2 | C2 | C3,
-  /* d */ L2 | C2 | C3 | R1 | R2,
-  /* E */ L1 | L2 | C1 | C2 | C3,
-  /* F */ L1 | L2 | C1 | C2
+  /* 0 */ (Segment) (L1 | L2 | C1 | C3 | R1 | R2),
+  /* 1 */ (Segment) (R1 | R2),
+  /* 2 */ (Segment) (L2 | C1 | C2 | C3 | R1),
+  /* 3 */ (Segment) (C1 | C2 | C3 | R1 | R2),
+  /* 4 */ (Segment) (L1 | C2 | R1 | R2),
+  /* 5 */ (Segment) (L1 | C1 | C2 | C3 | R2),
+  /* 6 */ (Segment) (L1 | L2 | C1 | C2 | C3 | R2),
+  /* 7 */ (Segment) (L1 | C1 | R1 | R2),
+  /* 8 */ (Segment) (L1 | L2 | C1 | C2 | C3 | R1 | R2),
+  /* 9 */ (Segment) (L1 | C1 | C2 | C3 | R1 | R2),
+  /* A */ (Segment) (L1 | L2 | C1 | C2 | R1 | R2),
+  /* b */ (Segment) (L1 | L2 | C2 | C3 | R2),
+  /* c */ (Segment) (L2 | C2 | C3),
+  /* d */ (Segment) (L2 | C2 | C3 | R1 | R2),
+  /* E */ (Segment) (L1 | L2 | C1 | C2 | C3),
+  /* F */ (Segment) (L1 | L2 | C1 | C2)
 };
 
 // アルファベット
 namespace sg {
-  const Segment A = L1 | L2 | C1 | C2 | R1 | R2;
-  const Segment B = L1 | L2 | C2 | C3 | R2;
-  const Segment C = L2 | C2 | C3;
-  const Segment D = L2 | C2 | C3 | R1 | R2;
-  const Segment E = L1 | L2 | C1 | C2 | C3;
-  const Segment F = L1 | L2 | C1 | C2;
-  const Segment ALL_0 = 0;
+  const Segment A = (Segment) (L1 | L2 | C1 | C2 | R1 | R2);
+  const Segment B = (Segment) (L1 | L2 | C2 | C3 | R2);
+  const Segment C = (Segment) (L2 | C2 | C3);
+  const Segment D = (Segment) (L2 | C2 | C3 | R1 | R2);
+  const Segment E = (Segment) (L1 | L2 | C1 | C2 | C3);
+  const Segment F = (Segment) (L1 | L2 | C1 | C2);
+  const Segment ALL_0 = (Segment) 0;
 }
 
 // セグメント実行
@@ -393,15 +393,15 @@ enum Rgb { R = 0x1, G = 0x2, B = 0x4 };
 struct RgbPins { byte pin; Rgb color; };
 const RgbPins rgb_pins[] = { { LED_RED_PIN, R }, { LED_GREEN_PIN, G }, { LED_BLUE_PIN, B } };
 // 白（ホワイト）
-const Rgb W = R | G | B;
+const Rgb W = (Rgb) (R | G | B);
 // 水色（シアン）
-const Rgb C = G | B;
+const Rgb C = (Rgb) (G | B);
 // 黄色（イエロー）
-const Rgb Y = R | G;
+const Rgb Y = (Rgb) (R | G);
 // 紫（マゼンタ）
-const Rgb M = R | B;
+const Rgb M = (Rgb) (R | B);
 // 消灯（ブラック）
-const Rgb K = 0;
+const Rgb K = (Rgb) 0;
 // 各色の格納変数
 const byte rgbIndex[] = { R, G, B, W, C, Y, M, K };
 
