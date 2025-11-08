@@ -10,7 +10,7 @@ on:
 jobs:
   compile:
     name: Compile
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-slim
 
     steps:
 
