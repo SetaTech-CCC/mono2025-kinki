@@ -5,7 +5,7 @@ void start() {
   servo(SERVO_MIN);
 }
 
-void loop() {
+void inspection() {
   // LEDバーの位置 (列挙型変数要参照)
   static byte bar_gage = 1;
   // LEDバーの色 (列挙型変数要参照)
@@ -65,4 +65,10 @@ void loop() {
   servo(pos);
   // フォトインタラプタ遮蔽時にブザー低音鳴動
   if (isPhotoEnabled()) buzz(LO, 0.3);
+}
+
+// デバッグ用に隔離
+void loop() {
+  // 呼び出し
+  inspection();
 }

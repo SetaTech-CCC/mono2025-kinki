@@ -156,12 +156,12 @@ const byte POTENTIOMETER_PIN = A15; // CN3-7
 // タクトスイッチ
 const byte TACT_TEST_LEFT_PIN = 44; // CN3-8
 const byte TACT_TEST_RIGHT_PIN = 45; // CN3-9
-const byte TACT_LEFT_LEFT_PIN = 48; // A-3 or A-2
-const byte TACT_LEFT_RIGHT_PIN = 49; // A-4 or A-3
+const byte TACT_LEFT_LEFT_PIN = 49; // A-3 or A-2
+const byte TACT_LEFT_RIGHT_PIN = 51; // A-4 or A-3
 const byte TACT_RIGHT_LEFT_PIN = 50; // A-5 or A-4
-const byte TACT_RIGHT_RIGHT_PIN = 51; // A-6 or A-5
+const byte TACT_RIGHT_RIGHT_PIN = 52; // A-6 or A-5
 // トグルスイッチ
-const byte TOGGLE_PIN = 52; // A-2 or A-6
+const byte TOGGLE_PIN = 48; // A-2 or A-6
 // ジョイスティック
 const byte JOYSTICK_X_PIN = A1; // A-7
 const byte JOYSTICK_Y_PIN = A2; // A-8
@@ -216,6 +216,8 @@ void stepper(const boolean reverse = false) {
   step_index = (step_index + 1) % 4;
   // モーター処理切り替え
   mode();
+  // 強制遅延
+  delay(10);
 }
 
 /*************
@@ -541,7 +543,7 @@ inline word getPot() {
 // 可変抵抗器と7セグを同期
 void syncPot() {
   // 1023 -> 9
-  seg(num[map(getPot(), 0, 1023, 0, 9)]);
+  seg(num[map(getPot(), 0, 896, 0, 9)]);
 }
 
 /*******************
@@ -569,9 +571,9 @@ void syncArrow() {
   // Y軸
   word yValue = getJoyY();
   if (yValue < THRESHOLD_LOW) {
-    matrix(mt::UP);
-  } else if (yValue > THRESHOLD_HIGH) {
     matrix(mt::DOWN);
+  } else if (yValue > THRESHOLD_HIGH) {
+    matrix(mt::UP);
   } else if (xValue > THRESHOLD_HIGH) {
     matrix(mt::RIGHT);
   } else if (xValue < THRESHOLD_LOW) {
